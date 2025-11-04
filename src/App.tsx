@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { LoginPage } from './components/LoginPage';
+import { RegisterPage } from './components/RegisterPage';
 import { Dashboard } from './components/Dashboard';
 import { CreateTicket } from './components/CreateTicket';
 import { TicketDetails } from './components/TicketDetails';
 import { AdminPanel } from './components/AdminPanel';
+import { Statistics } from './components/Statistics';
 import { Navbar } from './components/Navbar';
 import { Ticket, Page } from './types';
 
@@ -137,6 +139,7 @@ function AppContent() {
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
   const [tickets, setTickets] = useState<Ticket[]>(initialTickets);
   const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
+  const [showRegister, setShowRegister] = useState(false);
 
   const handleCreateTicket = (ticketData: Omit<Ticket, 'id' | 'createdAt' | 'updatedAt' | 'history'>) => {
     const newTicket: Ticket = {
@@ -170,9 +173,12 @@ function AppContent() {
 
   const selectedTicket = tickets.find(t => t.id === selectedTicketId);
 
-  // Если пользователь не авторизован, показываем страницу входа
+  // Если пользователь не авторизован, п��казываем страницу входа или регистрации
   if (!isAuthenticated) {
-    return <LoginPage />;
+    if (showRegister) {
+      return <RegisterPage onSwitchToLogin={() => setShowRegister(false)} />;
+    }
+    return <LoginPage onSwitchToRegister={() => setShowRegister(true)} />;
   }
 
   return (
@@ -182,6 +188,7 @@ function AppContent() {
         currentPage={currentPage}
         onNavigateAdmin={() => setCurrentPage('admin')}
         onNavigateDashboard={() => setCurrentPage('dashboard')}
+        onNavigateStatistics={() => setCurrentPage('statistics')}
       />
 
       {/* Основной контент */}
@@ -217,6 +224,13 @@ function AppContent() {
             tickets={tickets}
             onBack={() => setCurrentPage('dashboard')}
             onUpdateTicket={handleUpdateTicket}
+          />
+        )}
+
+        {currentPage === 'statistics' && (
+          <Statistics
+            tickets={tickets}
+            onBack={() => setCurrentPage('dashboard')}
           />
         )}
       </main>

@@ -11,6 +11,11 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }: AdminPanelProps)
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [newStatus, setNewStatus] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [priorityFilter, setPriorityFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [assignedFilter, setAssignedFilter] = useState('all');
 
   const handleUpdate = () => {
     if (!selectedTicket) return;
@@ -50,6 +55,24 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }: AdminPanelProps)
     };
     return colors[priority as keyof typeof colors] || 'bg-gray-500 text-white';
   };
+
+  // Фильтрация заявок
+  const filteredTickets = tickets.filter(ticket => {
+    const searchLower = searchTerm.toLowerCase();
+    const matchesSearch = 
+      ticket.id.toString().includes(searchLower) ||
+      ticket.title.toLowerCase().includes(searchLower) ||
+      ticket.author.toLowerCase().includes(searchLower) ||
+      (ticket.assignedTo && ticket.assignedTo.toLowerCase().includes(searchLower));
+    
+    const matchesStatus = statusFilter === 'all' || ticket.status === statusFilter;
+    const matchesPriority = priorityFilter === 'all' || ticket.priority === priorityFilter;
+    const matchesCategory = categoryFilter === 'all' || ticket.category === categoryFilter;
+    const matchesAssigned = assignedFilter === 'all' || 
+      (assignedFilter === 'assigned' ? ticket.assignedTo : !ticket.assignedTo);
+    
+    return matchesSearch && matchesStatus && matchesPriority && matchesCategory && matchesAssigned;
+  });
 
   const stats = {
     total: tickets.length,
@@ -150,16 +173,110 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }: AdminPanelProps)
         </div>
       </div>
 
+      {/* Фильтры */}
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h3 className="mb-4">Фильтры для админ-панели</h3>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm mb-2 text-gray-700">Поиск по ID, теме, автору, исполнителю</label>
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Введите запрос..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E86C1] focus:border-transparent outline-none"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+            <div>
+              <label className="block text-sm mb-2 text-gray-700">Статус</label>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E86C1] focus:border-transparent outline-none"
+              >
+                <option value="all">Все</option>
+                <option value="Новая">Новая</option>
+                <option value="В работе">В работе</option>
+                <option value="Завершена">Завершена</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm mb-2 text-gray-700">Приоритет</label>
+              <select
+                value={priorityFilter}
+                onChange={(e) => setPriorityFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E86C1] focus:border-transparent outline-none"
+              >
+                <option value="all">Все</option>
+                <option value="Низкий">Низкий</option>
+                <option value="Средний">Средний</option>
+                <option value="Высокий">Высокий</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm mb-2 text-gray-700">Категория</label>
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E86C1] focus:border-transparent outline-none"
+              >
+                <option value="all">Все</option>
+                <option value="Оборудование">Оборудование</option>
+                <option value="Доступы">Доступы</option>
+                <option value="Програ��мное обеспечение">Программное обеспечение</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm mb-2 text-gray-700">Назначение</label>
+              <select
+                value={assignedFilter}
+                onChange={(e) => setAssignedFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E86C1] focus:border-transparent outline-none"
+              >
+                <option value="all">Все</option>
+                <option value="assigned">Назначены</option>
+                <option value="unassigned">Не назначены</option>
+              </select>
+            </div>
+
+            <div className="flex items-end">
+              <button
+                onClick={() => {
+                  setSearchTerm('');
+                  setStatusFilter('all');
+                  setPriorityFilter('all');
+                  setCategoryFilter('all');
+                  setAssignedFilter('all');
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+              >
+                Сбросить
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Список заявок */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
-          <h3>Управление заявками</h3>
+          <h3>Управление заявками ({filteredTickets.length})</h3>
         </div>
 
         {/* Мобильный вид - карточки */}
         <div className="lg:hidden">
-          <div className="divide-y divide-gray-200">
-            {tickets.map(ticket => (
+          {filteredTickets.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <p>Заявки не найдены</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-200">
+              {filteredTickets.map(ticket => (
               <div key={ticket.id} className="p-4 hover:bg-gray-50 transition-colors">
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-2">
@@ -191,8 +308,9 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }: AdminPanelProps)
                   </button>
                 </div>
               </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Десктопный вид - таблица */}
@@ -210,7 +328,7 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }: AdminPanelProps)
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {tickets.map(ticket => (
+              {filteredTickets.map(ticket => (
                 <tr key={ticket.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap text-sm">#{ticket.id}</td>
                   <td className="px-6 py-4 text-sm">
@@ -242,6 +360,11 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }: AdminPanelProps)
               ))}
             </tbody>
           </table>
+          {filteredTickets.length === 0 && (
+            <div className="text-center py-12 text-gray-500">
+              <p>Заявки не найдены</p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -281,7 +404,7 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }: AdminPanelProps)
                   onChange={(e) => setNewStatus(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E86C1] focus:border-transparent outline-none"
                 >
-                  <option value="Новая">Новая</option>
+                  <option value="Новая">Но��ая</option>
                   <option value="В работе">В работе</option>
                   <option value="Завершена">Завершена</option>
                 </select>

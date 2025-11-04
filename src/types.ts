@@ -24,4 +24,4 @@ export interface User {
   role: 'admin' | 'user';
 }
 
-export type Page = 'login' | 'dashboard' | 'create' | 'details' | 'admin';
+export type Page = 'login' | 'dashboard' | 'create' | 'details' | 'admin' | 'statistics';

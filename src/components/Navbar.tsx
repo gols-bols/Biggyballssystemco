@@ -6,12 +6,14 @@ interface NavbarProps {
   currentPage: Page;
   onNavigateAdmin: () => void;
   onNavigateDashboard: () => void;
+  onNavigateStatistics: () => void;
 }
 
 export function Navbar({
   currentPage,
   onNavigateAdmin,
   onNavigateDashboard,
+  onNavigateStatistics,
 }: NavbarProps) {
   const { user, isAdmin, logout, toggleRole } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -91,6 +93,15 @@ export function Navbar({
                   className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors whitespace-nowrap"
                 >
                   Дашборд
+                </button>
+              )}
+
+              {currentPage !== 'statistics' && (
+                <button
+                  onClick={onNavigateStatistics}
+                  className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors whitespace-nowrap"
+                >
+                  Статистика
                 </button>
               )}
 
@@ -175,6 +186,19 @@ export function Navbar({
                       className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-left"
                     >
                       Дашборд
+                    </button>
+                  )}
+
+                  {/* Статистика */}
+                  {currentPage !== 'statistics' && (
+                    <button
+                      onClick={() => {
+                        onNavigateStatistics();
+                        closeMobileMenu();
+                      }}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                    >
+                      Статистика
                     </button>
                   )}
 

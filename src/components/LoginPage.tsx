@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
-export function LoginPage() {
+interface LoginPageProps {
+  onSwitchToRegister: () => void;
+}
+
+export function LoginPage({ onSwitchToRegister }: LoginPageProps) {
   const { login, isAuthenticated } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -150,7 +154,20 @@ export function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+          {/* Переключение на регистрацию */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600">
+              Нет аккаунта?{' '}
+              <button
+                onClick={onSwitchToRegister}
+                className="text-[#2E86C1] hover:underline"
+              >
+                Зарегистрироваться
+              </button>
+            </p>
+          </div>
+
+          <div className="mt-4 p-4 bg-gray-50 rounded-lg">
             <p className="text-xs text-gray-600 mb-2">Тестовые учетные записи:</p>
             <p className="text-xs text-gray-600">👤 Пользователь: user / user123</p>
             <p className="text-xs text-gray-600">👤 Администратор: admin / admin123</p>
