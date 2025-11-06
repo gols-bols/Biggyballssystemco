@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Ticket } from '../types';
+import { PaginationRu } from './PaginationRu';
 
 interface AdminPanelProps {
   tickets: Ticket[];
@@ -16,6 +17,8 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }: AdminPanelProps)
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [assignedFilter, setAssignedFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const handleUpdate = () => {
     if (!selectedTicket) return;
@@ -73,6 +76,18 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }: AdminPanelProps)
     
     return matchesSearch && matchesStatus && matchesPriority && matchesCategory && matchesAssigned;
   });
+
+  // Пагинация
+  const totalPages = Math.ceil(filteredTickets.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedTickets = filteredTickets.slice(startIndex, endIndex);
+
+  // Сброс на первую страницу при изменении фильтров
+  const handleFilterChange = (setter: (value: any) => void, value: any) => {
+    setter(value);
+    setCurrentPage(1);
+  };
 
   const stats = {
     total: tickets.length,
@@ -182,7 +197,7 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }: AdminPanelProps)
             <input
               type="text"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => handleFilterChange(setSearchTerm, e.target.value)}
               placeholder="Введите запрос..."
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E86C1] focus:border-transparent outline-none"
             />
@@ -264,8 +279,13 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }: AdminPanelProps)
 
       {/* Список заявок */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
+        <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <h3>Управление заявками ({filteredTickets.length})</h3>
+          {totalPages > 1 && (
+            <span className="text-sm text-gray-500">
+              Страница {currentPage} из {totalPages}
+            </span>
+          )}
         </div>
 
         {/* Мобильный вид - карточки */}
@@ -276,7 +296,7 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }: AdminPanelProps)
             </div>
           ) : (
             <div className="divide-y divide-gray-200">
-              {filteredTickets.map(ticket => (
+              {paginatedTickets.map(ticket => (
               <div key={ticket.id} className="p-4 hover:bg-gray-50 transition-colors">
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-2">
@@ -328,7 +348,7 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }: AdminPanelProps)
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredTickets.map(ticket => (
+              {paginatedTickets.map(ticket => (
                 <tr key={ticket.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap text-sm">#{ticket.id}</td>
                   <td className="px-6 py-4 text-sm">
@@ -366,6 +386,17 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }: AdminPanelProps)
             </div>
           )}
         </div>
+
+        {/* Пагинация */}
+        {totalPages > 1 && (
+          <div className="border-t border-gray-200 px-4 py-4">
+            <PaginationRu
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </div>
+        )}
       </div>
 
       {/* Модальное окно редактирования */}

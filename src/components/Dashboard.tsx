@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Ticket } from '../types';
+import { PaginationRu } from './PaginationRu';
 
 interface DashboardProps {
   tickets: Ticket[];
@@ -15,6 +16,8 @@ export function Dashboard({ tickets, onViewTicket, onCreateTicket, isAdmin }: Da
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('all');
   const [sortBy, setSortBy] = useState('date-desc');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const filteredTickets = tickets.filter(ticket => {
     // Поиск по ID, теме, описанию и категории
@@ -72,6 +75,18 @@ export function Dashboard({ tickets, onViewTicket, onCreateTicket, isAdmin }: Da
         return 0;
     }
   });
+
+  // Пагинация
+  const totalPages = Math.ceil(filteredTickets.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedTickets = filteredTickets.slice(startIndex, endIndex);
+
+  // Сброс на первую страницу при изменении фильтров
+  const handleFilterChange = (setter: (value: any) => void, value: any) => {
+    setter(value);
+    setCurrentPage(1);
+  };
 
   const stats = {
     total: tickets.length,
@@ -196,6 +211,7 @@ export function Dashboard({ tickets, onViewTicket, onCreateTicket, isAdmin }: Da
               setCategoryFilter('all');
               setDateFilter('all');
               setSortBy('date-desc');
+              setCurrentPage(1);
             }}
             className="text-sm text-[#2E86C1] hover:underline flex items-center gap-1"
           >
@@ -221,13 +237,13 @@ export function Dashboard({ tickets, onViewTicket, onCreateTicket, isAdmin }: Da
               <input
                 type="text"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleFilterChange(setSearchTerm, e.target.value)}
                 placeholder="Введите запрос для поиска..."
                 className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E86C1] focus:border-transparent outline-none"
               />
               {searchTerm && (
                 <button
-                  onClick={() => setSearchTerm('')}
+                  onClick={() => handleFilterChange(setSearchTerm, '')}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -244,7 +260,7 @@ export function Dashboard({ tickets, onViewTicket, onCreateTicket, isAdmin }: Da
               <label className="block text-sm mb-2 text-gray-700">Статус</label>
               <select
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
+                onChange={(e) => handleFilterChange(setStatusFilter, e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E86C1] focus:border-transparent outline-none"
               >
                 <option value="all">Все статусы</option>
@@ -258,7 +274,7 @@ export function Dashboard({ tickets, onViewTicket, onCreateTicket, isAdmin }: Da
               <label className="block text-sm mb-2 text-gray-700">Приоритет</label>
               <select
                 value={priorityFilter}
-                onChange={(e) => setPriorityFilter(e.target.value)}
+                onChange={(e) => handleFilterChange(setPriorityFilter, e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E86C1] focus:border-transparent outline-none"
               >
                 <option value="all">Все приоритеты</option>
@@ -272,7 +288,7 @@ export function Dashboard({ tickets, onViewTicket, onCreateTicket, isAdmin }: Da
               <label className="block text-sm mb-2 text-gray-700">Категория</label>
               <select
                 value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
+                onChange={(e) => handleFilterChange(setCategoryFilter, e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E86C1] focus:border-transparent outline-none"
               >
                 <option value="all">Все категории</option>
@@ -286,7 +302,7 @@ export function Dashboard({ tickets, onViewTicket, onCreateTicket, isAdmin }: Da
               <label className="block text-sm mb-2 text-gray-700">Дата создания</label>
               <select
                 value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
+                onChange={(e) => handleFilterChange(setDateFilter, e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E86C1] focus:border-transparent outline-none"
               >
                 <option value="all">За все время</option>
@@ -300,7 +316,7 @@ export function Dashboard({ tickets, onViewTicket, onCreateTicket, isAdmin }: Da
               <label className="block text-sm mb-2 text-gray-700">Сортировка</label>
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
+                onChange={(e) => handleFilterChange(setSortBy, e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2E86C1] focus:border-transparent outline-none"
               >
                 <option value="date-desc">Новые сначала</option>
@@ -317,8 +333,13 @@ export function Dashboard({ tickets, onViewTicket, onCreateTicket, isAdmin }: Da
 
       {/* Список заявок */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
+        <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <h3>Заявки ({filteredTickets.length})</h3>
+          {totalPages > 1 && (
+            <span className="text-sm text-gray-500">
+              Страница {currentPage} из {totalPages}
+            </span>
+          )}
         </div>
 
         {/* Мобильный вид - карточки */}
@@ -329,7 +350,7 @@ export function Dashboard({ tickets, onViewTicket, onCreateTicket, isAdmin }: Da
             </div>
           ) : (
             <div className="divide-y divide-gray-200">
-              {filteredTickets.map(ticket => (
+              {paginatedTickets.map(ticket => (
                 <div key={ticket.id} className="p-4 hover:bg-gray-50 transition-colors">
                   <div className="space-y-3">
                     <div className="flex items-start justify-between gap-2">
@@ -383,7 +404,7 @@ export function Dashboard({ tickets, onViewTicket, onCreateTicket, isAdmin }: Da
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredTickets.map(ticket => (
+              {paginatedTickets.map(ticket => (
                 <tr key={ticket.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap text-sm">#{ticket.id}</td>
                   <td className="px-6 py-4 text-sm">
@@ -422,6 +443,17 @@ export function Dashboard({ tickets, onViewTicket, onCreateTicket, isAdmin }: Da
             </div>
           )}
         </div>
+
+        {/* Пагинация */}
+        {totalPages > 1 && (
+          <div className="border-t border-gray-200 px-4 py-4">
+            <PaginationRu
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

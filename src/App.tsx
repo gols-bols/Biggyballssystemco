@@ -8,6 +8,7 @@ import { TicketDetails } from './components/TicketDetails';
 import { AdminPanel } from './components/AdminPanel';
 import { Statistics } from './components/Statistics';
 import { Navbar } from './components/Navbar';
+import { Footer } from './components/Footer';
 import { Ticket, Page } from './types';
 
 // Начальные данные заявок
@@ -132,6 +133,231 @@ const initialTickets: Ticket[] = [
       },
     ],
   },
+  {
+    id: 6,
+    title: 'Замена картриджа в принтере Canon',
+    description: 'Необходимо заменить картридж в принтере Canon в кабинете 112. Принтер выдает ошибку "Low Toner".',
+    category: 'Оборудование',
+    priority: 'Средний',
+    status: 'Новая',
+    author: 'Морозова Т.В.',
+    assignedTo: null,
+    createdAt: '2025-11-04T10:15:00',
+    updatedAt: '2025-11-04T10:15:00',
+    history: [
+      {
+        timestamp: '2025-11-04T10:15:00',
+        action: 'Заявка создана',
+        user: 'Морозова Т.В.',
+      },
+    ],
+  },
+  {
+    id: 7,
+    title: 'Настройка учетной записи для нового преподавателя',
+    description: 'Создать учетную запись в системе и предоставить доступ к электронному журналу для Федорова А.С.',
+    category: 'Доступы',
+    priority: 'Высокий',
+    status: 'В работе',
+    author: 'Романова К.П.',
+    assignedTo: 'Иванов И.И.',
+    createdAt: '2025-11-03T13:45:00',
+    updatedAt: '2025-11-03T16:20:00',
+    history: [
+      {
+        timestamp: '2025-11-03T13:45:00',
+        action: 'Заявка создана',
+        user: 'Романова К.П.',
+      },
+      {
+        timestamp: '2025-11-03T16:20:00',
+        action: 'Статус изменен на "В работе"',
+        user: 'Администратор',
+      },
+    ],
+  },
+  {
+    id: 8,
+    title: 'Установка AutoCAD на компьютеры в чертежном кабинете',
+    description: 'Требуется установить AutoCAD 2024 на 10 компьютеров в кабинете технического черчения.',
+    category: 'Программное обеспечение',
+    priority: 'Средний',
+    status: 'Новая',
+    author: 'Григорьев В.М.',
+    assignedTo: null,
+    createdAt: '2025-11-04T09:00:00',
+    updatedAt: '2025-11-04T09:00:00',
+    history: [
+      {
+        timestamp: '2025-11-04T09:00:00',
+        action: 'Заявка создана',
+        user: 'Григорьев В.М.',
+      },
+    ],
+  },
+  {
+    id: 9,
+    title: 'Ремонт компьютера в кабинете директора',
+    description: 'Компьютер не включается. При нажатии на кнопку питания индикаторы не загораются, вентиляторы не запускаются.',
+    category: 'Оборудование',
+    priority: 'Высокий',
+    status: 'В работе',
+    author: 'Соколова Л.И.',
+    assignedTo: 'Петров П.П.',
+    createdAt: '2025-11-02T08:00:00',
+    updatedAt: '2025-11-02T11:30:00',
+    history: [
+      {
+        timestamp: '2025-11-02T08:00:00',
+        action: 'Заявка создана',
+        user: 'Соколова Л.И.',
+      },
+      {
+        timestamp: '2025-11-02T11:30:00',
+        action: 'Статус изменен на "В работе"',
+        user: 'Администратор',
+      },
+    ],
+  },
+  {
+    id: 10,
+    title: 'Обновление веб-браузеров на всех компьютерах',
+    description: 'Необходимо обновить Chrome и Firefox до последних версий на всех рабочих станциях.',
+    category: 'Программное обеспечение',
+    priority: 'Низкий',
+    status: 'Завершена',
+    author: 'Волков Н.Н.',
+    assignedTo: 'Сидоров С.С.',
+    createdAt: '2025-10-25T14:00:00',
+    updatedAt: '2025-10-29T17:00:00',
+    history: [
+      {
+        timestamp: '2025-10-25T14:00:00',
+        action: 'Заявка создана',
+        user: 'Волков Н.Н.',
+      },
+      {
+        timestamp: '2025-10-26T10:00:00',
+        action: 'Статус изменен на "В работе"',
+        user: 'Администратор',
+      },
+      {
+        timestamp: '2025-10-29T17:00:00',
+        action: 'Заявка закрыта',
+        user: 'Администратор',
+      },
+    ],
+  },
+  {
+    id: 11,
+    title: 'Настройка проектора в актовом зале',
+    description: 'Проектор не проецирует изображение с ноутбука. Возможно проблема с кабелем HDMI или настройками.',
+    category: 'Оборудование',
+    priority: 'Высокий',
+    status: 'Новая',
+    author: 'Белова Е.А.',
+    assignedTo: null,
+    createdAt: '2025-11-04T11:30:00',
+    updatedAt: '2025-11-04T11:30:00',
+    history: [
+      {
+        timestamp: '2025-11-04T11:30:00',
+        action: 'Заявка создана',
+        user: 'Белова Е.А.',
+      },
+    ],
+  },
+  {
+    id: 12,
+    title: 'Создание почтовой рассылки для студентов',
+    description: 'Необходимо создать групповую почтовую рассылку для группы СПО-23.',
+    category: 'Доступы',
+    priority: 'Низкий',
+    status: 'Новая',
+    author: 'Захарова М.Ю.',
+    assignedTo: null,
+    createdAt: '2025-11-03T15:00:00',
+    updatedAt: '2025-11-03T15:00:00',
+    history: [
+      {
+        timestamp: '2025-11-03T15:00:00',
+        action: 'Заявка создана',
+        user: 'Захарова М.Ю.',
+      },
+    ],
+  },
+  {
+    id: 13,
+    title: 'Установка Python и необходимых библиотек',
+    description: 'Установить Python 3.11 и библиотеки NumPy, Pandas, Matplotlib на компьютеры в лаборатории программирования.',
+    category: 'Программное обеспечение',
+    priority: 'Средний',
+    status: 'В работе',
+    author: 'Лебедев С.В.',
+    assignedTo: 'Иванов И.И.',
+    createdAt: '2025-11-01T12:00:00',
+    updatedAt: '2025-11-02T09:00:00',
+    history: [
+      {
+        timestamp: '2025-11-01T12:00:00',
+        action: 'Заявка создана',
+        user: 'Лебедев С.В.',
+      },
+      {
+        timestamp: '2025-11-02T09:00:00',
+        action: 'Статус изменен на "В работе"',
+        user: 'Администратор',
+      },
+    ],
+  },
+  {
+    id: 14,
+    title: 'Чистка и обслуживание компьютеров в кабинете 301',
+    description: 'Необходимо провести чистку системных блоков от пыли и проверить работоспособность всех компонентов.',
+    category: 'Оборудование',
+    priority: 'Низкий',
+    status: 'Завершена',
+    author: 'Орлов Д.П.',
+    assignedTo: 'Петров П.П.',
+    createdAt: '2025-10-20T10:00:00',
+    updatedAt: '2025-10-27T16:00:00',
+    history: [
+      {
+        timestamp: '2025-10-20T10:00:00',
+        action: 'Заявка создана',
+        user: 'Орлов Д.П.',
+      },
+      {
+        timestamp: '2025-10-22T08:00:00',
+        action: 'Статус изменен на "В работе"',
+        user: 'Администратор',
+      },
+      {
+        timestamp: '2025-10-27T16:00:00',
+        action: 'Заявка закрыта',
+        user: 'Администратор',
+      },
+    ],
+  },
+  {
+    id: 15,
+    title: 'Настройка доступа к сетевому хранилищу',
+    description: 'Предоставить доступ к сетевой папке "Учебные материалы" для группы преподавателей математики.',
+    category: 'Доступы',
+    priority: 'Средний',
+    status: 'Новая',
+    author: 'Новикова А.С.',
+    assignedTo: null,
+    createdAt: '2025-11-04T14:00:00',
+    updatedAt: '2025-11-04T14:00:00',
+    history: [
+      {
+        timestamp: '2025-11-04T14:00:00',
+        action: 'Заявка создана',
+        user: 'Новикова А.С.',
+      },
+    ],
+  },
 ];
 
 function AppContent() {
@@ -236,11 +462,7 @@ function AppContent() {
       </main>
 
       {/* Футер */}
-      <footer className="bg-white border-t border-gray-200 py-4 mt-auto">
-        <div className="container mx-auto px-4 text-center text-xs sm:text-sm text-gray-500">
-          © 2025 IT-отдел колледжа. Система управления заявками.
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
