@@ -1,36 +1,11 @@
 [build]
   command = "npm ci && npm run build"
-  publish = ""
+  publish = "dist"
 
 [build.environment]
   NODE_VERSION = "18"
-  NPM_FLAGS = "--legacy-peer-deps"
 
-# SPA redirects
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-# Security headers
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-XSS-Protection = "1; mode=block"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Cache-Control = "public, max-age=3600"
-
-# Yandex verification file
-[[headers]]
-  for = "/yandex_9653b135babb0503.html"
-  [headers.values]
-    Content-Type = "text/html; charset=UTF-8"
-    Cache-Control = "public, max-age=86400"
-
-# Assets caching
-[[headers]]
-  for = "/assets/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
