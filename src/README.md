@@ -2,16 +2,22 @@
 
 Интерактивная информационная система управления заявками для IT-отдела колледжа.
 
-## 🚀 Деплой
+## 🚨 БЫСТРЫЙ ДЕПЛОЙ
 
-### Netlify
+### Netlify Build Settings:
+```
+Build command: npm install && npm run build
+Publish directory: dist
+Node version: 18
+```
 
-**Build settings:**
-- Build command: `npm run build`
-- Publish directory: `dist`
-- Node version: 18
+### Или используй Netlify CLI:
+```bash
+npm install -g netlify-cli
+netlify deploy --prod
+```
 
-### Локальная разработка
+## 🚀 Локальная разработка
 
 ```bash
 # Установка зависимостей
@@ -57,6 +63,7 @@ npm run preview
 ├── contexts/            # React контексты
 ├── styles/              # CSS стили
 ├── public/              # Статичные файлы
+├── App.tsx              # Главный компонент
 └── index.html           # HTML шаблон
 ```
 
@@ -67,6 +74,10 @@ npm run preview
 - `tsconfig.json` - TypeScript конфигурация
 - `netlify.toml` - Netlify конфигурация
 - `postcss.config.js` - PostCSS/Tailwind конфигурация
+
+## 🐛 Troubleshooting
+
+Смотри `DEPLOY_INSTRUCTIONS.md` для детальных инструкций по деплою.
 
 ## 📄 Лицензия
 
