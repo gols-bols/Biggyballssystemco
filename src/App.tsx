@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { LoginPage } from './components/LoginPage';
 import { RegisterPage } from './components/RegisterPage';
@@ -9,6 +9,7 @@ import { AdminPanel } from './components/AdminPanel';
 import { Statistics } from './components/Statistics';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
+import { YandexVerification } from './components/YandexVerification';
 import { Ticket, Page } from './types';
 
 // Начальные данные заявок
@@ -313,7 +314,7 @@ const initialTickets: Ticket[] = [
   {
     id: 14,
     title: 'Чистка и обслуживание компьютеров в кабинете 301',
-    description: 'Необходимо провести чистку системных блоков от пыли и проверить работоспособность всех компонентов.',
+    description: 'Необходимо провести чистку системных блоков от пыли и проверит работоспособность всех компонентов.',
     category: 'Оборудование',
     priority: 'Низкий',
     status: 'Завершена',
@@ -360,12 +361,39 @@ const initialTickets: Ticket[] = [
   },
 ];
 
+// Функция для загрузки заявок из localStorage
+const loadTicketsFromStorage = (): Ticket[] => {
+  try {
+    const stored = localStorage.getItem('tickets_db');
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error('Ошибка загрузки заявок из localStorage:', error);
+  }
+  return initialTickets;
+};
+
+// Функция для сохранения заявок в localStorage
+const saveTicketsToStorage = (tickets: Ticket[]) => {
+  try {
+    localStorage.setItem('tickets_db', JSON.stringify(tickets));
+  } catch (error) {
+    console.error('Ошибка сохранения заявок в localStorage:', error);
+  }
+};
+
 function AppContent() {
   const { user, isAuthenticated, isAdmin } = useAuth();
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
-  const [tickets, setTickets] = useState<Ticket[]>(initialTickets);
+  const [tickets, setTickets] = useState<Ticket[]>(loadTicketsFromStorage);
   const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
   const [showRegister, setShowRegister] = useState(false);
+
+  // Сохранение заявок в localStorage при каждом изменении
+  useEffect(() => {
+    saveTicketsToStorage(tickets);
+  }, [tickets]);
 
   const handleCreateTicket = (ticketData: Omit<Ticket, 'id' | 'createdAt' | 'updatedAt' | 'history'>) => {
     const newTicket: Ticket = {
@@ -399,7 +427,7 @@ function AppContent() {
 
   const selectedTicket = tickets.find(t => t.id === selectedTicketId);
 
-  // Если пользователь не авторизован, п��казываем страницу входа или регистрации
+  // Если пользователь не авторизован, пказываем страницу входа или регистрации
   if (!isAuthenticated) {
     if (showRegister) {
       return <RegisterPage onSwitchToLogin={() => setShowRegister(false)} />;
@@ -409,7 +437,7 @@ function AppContent() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Верхняя панель навигации */}
+      {/* ерхняя панель навигации */}
       <Navbar
         currentPage={currentPage}
         onNavigateAdmin={() => setCurrentPage('admin')}
@@ -472,6 +500,7 @@ export default function App() {
     <AuthProvider>
       <div className="min-h-screen bg-gray-50">
         <AppContent />
+        <YandexVerification />
       </div>
     </AuthProvider>
   );

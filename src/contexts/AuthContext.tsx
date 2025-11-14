@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 interface User {
   username: string;
@@ -44,9 +44,67 @@ const initialUsersDB: StoredUser[] = [
   },
 ];
 
+// Функция для загрузки пользователей из localStorage
+const loadUsersFromStorage = (): StoredUser[] => {
+  try {
+    const stored = localStorage.getItem('users_db');
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error('Ошибка загрузки пользователей из localStorage:', error);
+  }
+  return initialUsersDB;
+};
+
+// Функция для сохранения пользователей в localStorage
+const saveUsersToStorage = (users: StoredUser[]) => {
+  try {
+    localStorage.setItem('users_db', JSON.stringify(users));
+  } catch (error) {
+    console.error('Ошибка сохранения пользователей в localStorage:', error);
+  }
+};
+
+// Функция для загрузки текущего пользователя из localStorage
+const loadCurrentUserFromStorage = (): User | null => {
+  try {
+    const stored = localStorage.getItem('current_user');
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error('Ошибка загрузки текущего пользователя из localStorage:', error);
+  }
+  return null;
+};
+
+// Функция для сохранения текущего пользователя в localStorage
+const saveCurrentUserToStorage = (user: User | null) => {
+  try {
+    if (user) {
+      localStorage.setItem('current_user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('current_user');
+    }
+  } catch (error) {
+    console.error('Ошибка сохранения текущего пользователя в localStorage:', error);
+  }
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [usersDB, setUsersDB] = useState<StoredUser[]>(initialUsersDB);
+  const [user, setUser] = useState<User | null>(loadCurrentUserFromStorage);
+  const [usersDB, setUsersDB] = useState<StoredUser[]>(loadUsersFromStorage);
+
+  // Сохранение пользователей в localStorage при каждом изменении
+  useEffect(() => {
+    saveUsersToStorage(usersDB);
+  }, [usersDB]);
+
+  // Сохранение текущего пользователя в localStorage при каждом изменении
+  useEffect(() => {
+    saveCurrentUserToStorage(user);
+  }, [user]);
 
   const login = (username: string, password: string): { success: boolean; error?: string } => {
     // Проверка на пустые поля

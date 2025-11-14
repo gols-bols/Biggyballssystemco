@@ -1,4 +1,25 @@
 export function Footer() {
+  const handleResetData = () => {
+    if (window.confirm('⚠️ Вы уверены, что хотите сбросить все данные к начальным значениям?\n\nЭто действие:\n• Удалит все созданные заявки\n• Удалит всех зарегистрированных пользователей\n• Восстановит данные по умолчанию\n• Выполнит выход из системы\n\nПродолжить?')) {
+      localStorage.clear();
+      window.location.reload();
+    }
+  };
+
+  const getStorageInfo = () => {
+    try {
+      const ticketsData = localStorage.getItem('tickets_db');
+      const usersData = localStorage.getItem('users_db');
+      const ticketsCount = ticketsData ? JSON.parse(ticketsData).length : 0;
+      const usersCount = usersData ? JSON.parse(usersData).length : 0;
+      return { ticketsCount, usersCount };
+    } catch {
+      return { ticketsCount: 0, usersCount: 0 };
+    }
+  };
+
+  const { ticketsCount, usersCount } = getStorageInfo();
+
   return (
     <footer className="bg-white border-t border-gray-200 mt-auto">
       <div className="container mx-auto px-4 py-6">
@@ -7,6 +28,16 @@ export function Footer() {
           <div className="text-center md:text-left">
             <p className="text-sm text-gray-600">
               © 2025 Система управления заявками IT-отдела колледжа
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              💾 LocalStorage: {ticketsCount} заявок, {usersCount} пользователей
+              {' • '}
+              <button
+                onClick={handleResetData}
+                className="text-[#E74C3C] hover:underline"
+              >
+                Сбросить данные
+              </button>
             </p>
           </div>
 
