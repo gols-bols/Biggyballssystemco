@@ -9,7 +9,6 @@ import { AdminPanel } from './components/AdminPanel';
 import { Statistics } from './components/Statistics';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
-import { YandexVerification } from './components/YandexVerification';
 import { Ticket, Page } from './types';
 
 // Начальные данные заявок
@@ -314,7 +313,7 @@ const initialTickets: Ticket[] = [
   {
     id: 14,
     title: 'Чистка и обслуживание компьютеров в кабинете 301',
-    description: 'Необходимо провести чистку системных блоков от пыли и проверит работоспособность всех компонентов.',
+    description: 'Необходимо провести чистку системных блоков от пыли и проверить работоспособность всех компонентов.',
     category: 'Оборудование',
     priority: 'Низкий',
     status: 'Завершена',
@@ -437,7 +436,7 @@ function AppContent() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* ерхняя панель навигации */}
+      {/* Верхняя панель навигации */}
       <Navbar
         currentPage={currentPage}
         onNavigateAdmin={() => setCurrentPage('admin')}
@@ -500,7 +499,6 @@ export default function App() {
     <AuthProvider>
       <div className="min-h-screen bg-gray-50">
         <AppContent />
-        <YandexVerification />
       </div>
     </AuthProvider>
   );
