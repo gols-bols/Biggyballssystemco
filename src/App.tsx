@@ -9,6 +9,7 @@ import { AdminPanel } from './components/AdminPanel';
 import { Statistics } from './components/Statistics';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
+import { YandexVerification } from './components/YandexVerification';
 import { Ticket, Page } from './types';
 
 // Начальные данные заявок
@@ -57,7 +58,7 @@ const initialTickets: Ticket[] = [
       {
         timestamp: '2025-11-02T14:20:00',
         action: 'Заявка создана',
-        user: 'Кузнецова О.В.',
+        user: 'Кузнецов�� О.В.',
       },
     ],
   },
@@ -313,7 +314,7 @@ const initialTickets: Ticket[] = [
   {
     id: 14,
     title: 'Чистка и обслуживание компьютеров в кабинете 301',
-    description: 'Необходимо провести чистку системных блоков от пыли и проверить работоспособность всех компонентов.',
+    description: 'Необходимо провести чистку системных блоков от пыли и проверит работоспособность всех компонентов.',
     category: 'Оборудование',
     priority: 'Низкий',
     status: 'Завершена',
@@ -499,6 +500,7 @@ export default function App() {
     <AuthProvider>
       <div className="min-h-screen bg-gray-50">
         <AppContent />
+        <YandexVerification />
       </div>
     </AuthProvider>
   );
