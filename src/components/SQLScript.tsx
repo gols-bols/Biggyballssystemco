@@ -383,11 +383,36 @@ CREATE INDEX idx_notifications_user_read ON notifications(user_id, is_read, crea
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(sqlScript);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      // Пробуем использовать современный Clipboard API
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(sqlScript);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } else {
+        // Альтернативный метод для случаев, когда Clipboard API недоступен
+        const textArea = document.createElement('textarea');
+        textArea.value = sqlScript;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        try {
+          document.execCommand('copy');
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+          console.error('Не удалось скопировать текст:', err);
+          alert('Копирование не поддерживается в этом окружении. Используйте кнопку "Скачать".');
+        }
+        
+        document.body.removeChild(textArea);
+      }
     } catch (err) {
       console.error('Ошибка при копировании:', err);
+      alert('Копирование не поддерживается в этом окружении. Используйте кнопку "Скачать".');
     }
   };
 
