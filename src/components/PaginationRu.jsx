@@ -1,10 +1,4 @@
-interface PaginationRuProps {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-}
-
-export function PaginationRu({ currentPage, totalPages, onPageChange }: PaginationRuProps) {
+export function PaginationRu({ currentPage, totalPages, onPageChange }) {
   return (
     <nav role="navigation" aria-label="pagination" className="mx-auto flex w-full justify-center">
       <ul className="flex flex-row items-center gap-1">

@@ -1,9 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from '../App';
+import App from '../App.tsx';
 import '../styles/globals.css';
-
-console.log('🚀 App starting...');
 
 const rootElement = document.getElementById('root');
 
@@ -16,5 +14,3 @@ ReactDOM.createRoot(rootElement).render(
     <App />
   </React.StrictMode>
 );
-
-console.log('✅ App rendered successfully');

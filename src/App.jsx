@@ -436,6 +436,7 @@ function AppContent() {
 
   return (
     <div className="flex flex-col min-h-screen">
+      {/* Верхняя панель навигации */}
       <Navbar
         currentPage={currentPage}
         onNavigateAdmin={() => setCurrentPage('admin')}
@@ -443,6 +444,7 @@ function AppContent() {
         onNavigateStatistics={() => setCurrentPage('statistics')}
       />
 
+      {/* Основной контент */}
       <main className="flex-1 container mx-auto px-4 py-8">
         {currentPage === 'dashboard' && (
           <Dashboard
@@ -486,6 +488,7 @@ function AppContent() {
         )}
       </main>
 
+      {/* Футер */}
       <Footer />
     </div>
   );
