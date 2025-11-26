@@ -30,19 +30,22 @@ const testUsers = [
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Загрузка пользователя из localStorage при монтировании
   useEffect(() => {
-    const storedUser = localStorage.getItem('current_user');
-    if (storedUser) {
-      try {
+    try {
+      const storedUser = localStorage.getItem('current_user');
+      if (storedUser) {
         const userData = JSON.parse(storedUser);
         setUser(userData);
         setIsAuthenticated(true);
-      } catch (error) {
-        console.error('Ошибка загрузки пользователя:', error);
-        localStorage.removeItem('current_user');
       }
+    } catch (error) {
+      console.error('Ошибка загрузки пользователя:', error);
+      localStorage.removeItem('current_user');
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -147,6 +150,7 @@ export function AuthProvider({ children }) {
     logout,
     register,
     toggleRole,
+    isLoading,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
