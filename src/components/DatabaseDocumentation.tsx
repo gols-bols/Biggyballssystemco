@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, Database, GitBranch, Table, Download, CheckCircle } from 'lucide-react';
+import { FileText, Database, GitBranch, Table, Download, CheckCircle } from './icons';
 import { IDEF0Diagram } from './IDEF0Diagram';
 import { ERDiagram } from './ERDiagram';
 import { SQLScript } from './SQLScript';

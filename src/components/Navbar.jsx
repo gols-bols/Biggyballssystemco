@@ -6,6 +6,7 @@ export function Navbar({
   onNavigateAdmin,
   onNavigateDashboard,
   onNavigateStatistics,
+  onNavigateDocumentation,
 }) {
   const { user, isAdmin, logout, toggleRole } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -236,6 +237,23 @@ export function Navbar({
                 }}
               >
                 Статистика
+              </button>
+            )}
+
+            {currentPage !== 'documentation' && (
+              <button
+                onClick={onNavigateDocumentation}
+                style={styles.button}
+                onMouseEnter={(e) => {
+                  e.target.style.background = '#2E86C1';
+                  e.target.style.color = '#ffffff';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'transparent';
+                  e.target.style.color = '#2E86C1';
+                }}
+              >
+                Документация
               </button>
             )}
 
