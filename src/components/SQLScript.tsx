@@ -337,7 +337,7 @@ DELIMITER ;
 
 DELIMITER //
 
--- Триггер для автоматического расчета дедлайна
+-- Триггер для автоматического рас��ета дедлайна
 CREATE TRIGGER tr_tickets_before_insert
 BEFORE INSERT ON tickets
 FOR EACH ROW
@@ -381,38 +381,29 @@ CREATE INDEX idx_notifications_user_read ON notifications(user_id, is_read, crea
 -- Конец скрипта
 -- ==================================================`;
 
-  const handleCopy = async () => {
+  const handleCopy = () => {
+    // Используем надежный метод копирования, который работает везде
+    const textArea = document.createElement('textarea');
+    textArea.value = sqlScript;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
     try {
-      // Пробуем использовать современный Clipboard API
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(sqlScript);
+      const successful = document.execCommand('copy');
+      if (successful) {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       } else {
-        // Альтернативный метод для случаев, когда Clipboard API недоступен
-        const textArea = document.createElement('textarea');
-        textArea.value = sqlScript;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-999999px';
-        textArea.style.top = '-999999px';
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        
-        try {
-          document.execCommand('copy');
-          setCopied(true);
-          setTimeout(() => setCopied(false), 2000);
-        } catch (err) {
-          console.error('Не удалось скопировать текст:', err);
-          alert('Копирование не поддерживается в этом окружении. Используйте кнопку "Скачать".');
-        }
-        
-        document.body.removeChild(textArea);
+        console.log('Используйте кнопку "Скачать" для сохранения скрипта');
       }
     } catch (err) {
-      console.error('Ошибка при копировании:', err);
-      alert('Копирование не поддерживается в этом окружении. Используйте кнопку "Скачать".');
+      console.log('Используйте кнопку "Скачать" для сохранения скрипта');
+    } finally {
+      document.body.removeChild(textArea);
     }
   };
 
