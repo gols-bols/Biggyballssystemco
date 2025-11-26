@@ -3,15 +3,17 @@ import React from 'react';
 export class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, errorInfo: null };
   }
 
   static getDerivedStateFromError(error) {
+    console.error('ErrorBoundary перехватил ошибку:', error);
     return { hasError: true, error };
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo);
+    console.error('Детали ошибки:', error, errorInfo);
+    this.setState({ errorInfo });
   }
 
   render() {

@@ -12,12 +12,12 @@ import { Footer } from './components/Footer';
 import { YandexVerification } from './components/YandexVerification';
 import { DatabaseDocumentation } from './components/DatabaseDocumentation';
 
-// Начальные данные заявок
+// Начальные данные заявок (оптимизированный набор для пагинации)
 const initialTickets = [
   {
     id: 1,
     title: 'Не работает принтер в аудитории 205',
-    description: 'Принтер HP LaserJet в аудитории 205 не печатает документы.',
+    description: 'Принтер HP LaserJet не печатает документы.',
     category: 'Оборудование',
     priority: 'Высокий',
     status: 'В работе',
@@ -33,7 +33,7 @@ const initialTickets = [
   {
     id: 2,
     title: 'Запрос доступа к корпоративной почте',
-    description: 'Прошу предоставить доступ к корпоративной почте для нового сотрудника.',
+    description: 'Прошу предоставить доступ к почте для нового сотрудника.',
     category: 'Доступы',
     priority: 'Средний',
     status: 'Новая',
@@ -47,8 +47,8 @@ const initialTickets = [
   },
   {
     id: 3,
-    title: 'Установка Microsoft Office на новый компьютер',
-    description: 'Необходимо установить пакет Microsoft Office 2021 на компьютер преподавателя в кабинете 301.',
+    title: 'Установка Microsoft Office',
+    description: 'Установить MS Office 2021 на компьютер в кабинете 301.',
     category: 'Программное обеспечение',
     priority: 'Средний',
     status: 'Завершена',
@@ -58,14 +58,13 @@ const initialTickets = [
     updatedAt: '2025-10-30T16:45:00',
     history: [
       { timestamp: '2025-10-28T11:15:00', action: 'Заявка создана', user: 'Смирнов А.И.' },
-      { timestamp: '2025-10-29T09:00:00', action: 'Статус изменен на "В работе"', user: 'Администратор' },
       { timestamp: '2025-10-30T16:45:00', action: 'Статус изменен на "Завершена"', user: 'Петров П.П.' },
     ],
   },
   {
     id: 4,
     title: 'Не работает проектор в актовом зале',
-    description: 'Проектор Epson не включается, возможно проблема с питанием.',
+    description: 'Проектор Epson не включается.',
     category: 'Оборудование',
     priority: 'Высокий',
     status: 'Новая',
@@ -80,7 +79,7 @@ const initialTickets = [
   {
     id: 5,
     title: 'Сброс пароля от учетной записи',
-    description: 'Забыл пароль от учетной записи в корпоративной сети, требуется сброс.',
+    description: 'Требуется сброс пароля от корпоративной сети.',
     category: 'Доступы',
     priority: 'Высокий',
     status: 'В работе',
@@ -96,7 +95,7 @@ const initialTickets = [
   {
     id: 6,
     title: 'Обновление антивирусного ПО',
-    description: 'Требуется обновить Kaspersky Endpoint Security на всех компьютерах лаборатории.',
+    description: 'Обновить Kaspersky на всех компьютерах лаборатории.',
     category: 'Программное обеспечение',
     priority: 'Средний',
     status: 'Новая',
@@ -111,7 +110,7 @@ const initialTickets = [
   {
     id: 7,
     title: 'Замена картриджа в принтере',
-    description: 'В принтере Canon в кабинете 110 закончился тонер, нужна замена картриджа.',
+    description: 'В принтере Canon закончился тонер.',
     category: 'Оборудование',
     priority: 'Низкий',
     status: 'Завершена',
@@ -121,14 +120,13 @@ const initialTickets = [
     updatedAt: '2025-10-26T10:00:00',
     history: [
       { timestamp: '2025-10-25T13:20:00', action: 'Заявка создана', user: 'Волкова Т.А.' },
-      { timestamp: '2025-10-25T14:00:00', action: 'Статус изменен на "В работе"', user: 'Петров П.П.' },
       { timestamp: '2025-10-26T10:00:00', action: 'Статус изменен на "Завершена"', user: 'Петров П.П.' },
     ],
   },
   {
     id: 8,
     title: 'Настройка Wi-Fi в учебном корпусе',
-    description: 'Слабый сигнал Wi-Fi на втором этаже, студенты жалуются на постоянные обрывы связи.',
+    description: 'Слабый сигнал Wi-Fi на втором этаже.',
     category: 'Оборудование',
     priority: 'Высокий',
     status: 'В работе',
@@ -143,8 +141,8 @@ const initialTickets = [
   },
   {
     id: 9,
-    title: 'Установка Adobe Photoshop для дизайнеров',
-    description: 'Необходимо установить Adobe Photoshop CC на компьютеры в кабинете дизайна.',
+    title: 'Установка Adobe Photoshop',
+    description: 'Установить Adobe Photoshop CC на компьютеры в кабинете дизайна.',
     category: 'Программное обеспечение',
     priority: 'Средний',
     status: 'Новая',
@@ -158,8 +156,8 @@ const initialTickets = [
   },
   {
     id: 10,
-    title: 'Ремонт клавиатуры в компьютерном классе',
-    description: 'Клавиатура на рабочем месте №5 не работает, требуется замена.',
+    title: 'Ремонт клавиатуры',
+    description: 'Клавиатура на рабочем месте №5 не работает.',
     category: 'Оборудование',
     priority: 'Низкий',
     status: 'Завершена',
@@ -169,14 +167,13 @@ const initialTickets = [
     updatedAt: '2025-10-30T14:00:00',
     history: [
       { timestamp: '2025-10-29T10:30:00', action: 'Заявка создана', user: 'Лебедев А.Н.' },
-      { timestamp: '2025-10-30T09:00:00', action: 'Статус изменен на "В работе"', user: 'Петров П.П.' },
       { timestamp: '2025-10-30T14:00:00', action: 'Статус изменен на "Завершена"', user: 'Петров П.П.' },
     ],
   },
   {
     id: 11,
-    title: 'Создание учетной записи для нового преподавателя',
-    description: 'Новому преподавателю Ивановой Л.М. нужен доступ к корпоративным ресурсам.',
+    title: 'Создание учетной записи',
+    description: 'Новому преподавателю нужен доступ к ресурсам.',
     category: 'Доступы',
     priority: 'Средний',
     status: 'В работе',
@@ -192,7 +189,7 @@ const initialTickets = [
   {
     id: 12,
     title: 'Не запускается 1С:Предприятие',
-    description: 'На компьютере бухгалтерии не запускается программа 1С, выдает ошибку.',
+    description: 'Программа 1С выдает ошибку при запуске.',
     category: 'Программное обеспечение',
     priority: 'Высокий',
     status: 'Новая',
@@ -206,8 +203,8 @@ const initialTickets = [
   },
   {
     id: 13,
-    title: 'Настройка общего сетевого диска',
-    description: 'Требуется настроить доступ к общему сетевому диску для отдела.',
+    title: 'Настройка сетевого диска',
+    description: 'Настроить доступ к общему сетевому диску.',
     category: 'Доступы',
     priority: 'Средний',
     status: 'Завершена',
@@ -217,14 +214,13 @@ const initialTickets = [
     updatedAt: '2025-10-28T15:30:00',
     history: [
       { timestamp: '2025-10-27T11:00:00', action: 'Заявка создана', user: 'Сидоров В.А.' },
-      { timestamp: '2025-10-27T14:00:00', action: 'Статус изменен на "В работе"', user: 'Администратор' },
       { timestamp: '2025-10-28T15:30:00', action: 'Статус изменен на "Завершена"', user: 'Администратор' },
     ],
   },
   {
     id: 14,
-    title: 'Замена монитора в аудитории 315',
-    description: 'Монитор мерцает и показывает полосы, требуется замена.',
+    title: 'Замена монитора',
+    description: 'Монитор мерцает и показывает полосы.',
     category: 'Оборудование',
     priority: 'Средний',
     status: 'В работе',
@@ -239,8 +235,8 @@ const initialTickets = [
   },
   {
     id: 15,
-    title: 'Установка Python 3.11 в лаборатории программирования',
-    description: 'Для нового курса по машинному обучению нужен Python 3.11 и библиотеки.',
+    title: 'Установка Python 3.11',
+    description: 'Для курса по ML нужен Python 3.11.',
     category: 'Программное обеспечение',
     priority: 'Высокий',
     status: 'Новая',
@@ -250,162 +246,6 @@ const initialTickets = [
     updatedAt: '2025-11-03T09:15:00',
     history: [
       { timestamp: '2025-11-03T09:15:00', action: 'Заявка создана', user: 'Орлов П.Е.' },
-    ],
-  },
-  {
-    id: 16,
-    title: 'Медленно работает интернет в библиотеке',
-    description: 'Студенты жалуются на низкую скорость интернета в читальном зале.',
-    category: 'Оборудование',
-    priority: 'Средний',
-    status: 'Новая',
-    author: 'Козлова Е.И.',
-    assignedTo: null,
-    createdAt: '2025-11-02T16:00:00',
-    updatedAt: '2025-11-02T16:00:00',
-    history: [
-      { timestamp: '2025-11-02T16:00:00', action: 'Заявка создана', user: 'Козлова Е.И.' },
-    ],
-  },
-  {
-    id: 17,
-    title: 'Не открывается электронный журнал',
-    description: 'При попытке войти в электронный журнал выдает ошибку авторизации.',
-    category: 'Доступы',
-    priority: 'Высокий',
-    status: 'В работе',
-    author: 'Романова Ю.Д.',
-    assignedTo: 'Администратор',
-    createdAt: '2025-11-03T08:00:00',
-    updatedAt: '2025-11-03T09:30:00',
-    history: [
-      { timestamp: '2025-11-03T08:00:00', action: 'Заявка создана', user: 'Романова Ю.Д.' },
-      { timestamp: '2025-11-03T09:30:00', action: 'Статус изменен на "В работе"', user: 'Администратор' },
-    ],
-  },
-  {
-    id: 18,
-    title: 'Настройка видеоконференции в Zoom',
-    description: 'Необходимо настроить и протестировать Zoom для онлайн-лекций.',
-    category: 'Программное обеспечение',
-    priority: 'Средний',
-    status: 'Завершена',
-    author: 'Алексеев Г.Н.',
-    assignedTo: 'Петров П.П.',
-    createdAt: '2025-10-26T10:00:00',
-    updatedAt: '2025-10-27T16:00:00',
-    history: [
-      { timestamp: '2025-10-26T10:00:00', action: 'Заявка создана', user: 'Алексеев Г.Н.' },
-      { timestamp: '2025-10-27T09:00:00', action: 'Статус изменен на "В работе"', user: 'Петров П.П.' },
-      { timestamp: '2025-10-27T16:00:00', action: 'Статус изменен на "Завершена"', user: 'Петров П.П.' },
-    ],
-  },
-  {
-    id: 19,
-    title: 'Не работает сканер в деканате',
-    description: 'Сканер HP не распознается системой, не удается отсканировать документы.',
-    category: 'Оборудование',
-    priority: 'Средний',
-    status: 'Новая',
-    author: 'Денисова О.Л.',
-    assignedTo: null,
-    createdAt: '2025-11-03T11:30:00',
-    updatedAt: '2025-11-03T11:30:00',
-    history: [
-      { timestamp: '2025-11-03T11:30:00', action: 'Заявка создана', user: 'Денисова О.Л.' },
-    ],
-  },
-  {
-    id: 20,
-    title: 'Установка AutoCAD для чертежной группы',
-    description: 'Студентам инженерного отделения нужен AutoCAD 2024 для занятий.',
-    category: 'Программное обеспечение',
-    priority: 'Высокий',
-    status: 'В работе',
-    author: 'Захаров Д.В.',
-    assignedTo: 'Петров П.П.',
-    createdAt: '2025-11-02T13:00:00',
-    updatedAt: '2025-11-03T10:30:00',
-    history: [
-      { timestamp: '2025-11-02T13:00:00', action: 'Заявка создана', user: 'Захаров Д.В.' },
-      { timestamp: '2025-11-03T10:30:00', action: 'Статус изменен на "В работе"', user: 'Петров П.П.' },
-    ],
-  },
-  {
-    id: 21,
-    title: 'Блокировка спам-рассылок на почте',
-    description: 'Последнее время много спама в корпоративной почте, требуется усилить фильтрацию.',
-    category: 'Доступы',
-    priority: 'Низкий',
-    status: 'Новая',
-    author: 'Белова М.К.',
-    assignedTo: null,
-    createdAt: '2025-11-01T15:00:00',
-    updatedAt: '2025-11-01T15:00:00',
-    history: [
-      { timestamp: '2025-11-01T15:00:00', action: 'Заявка создана', user: 'Белова М.К.' },
-    ],
-  },
-  {
-    id: 22,
-    title: 'Замена батареек в беспроводной мыши',
-    description: 'В кабинете 204 беспроводная мышь не работает, нужны новые батарейки.',
-    category: 'Оборудование',
-    priority: 'Низкий',
-    status: 'Завершена',
-    author: 'Титов С.Р.',
-    assignedTo: 'Петров П.П.',
-    createdAt: '2025-10-30T12:00:00',
-    updatedAt: '2025-10-30T14:30:00',
-    history: [
-      { timestamp: '2025-10-30T12:00:00', action: 'Заявка создана', user: 'Титов С.Р.' },
-      { timestamp: '2025-10-30T14:30:00', action: 'Статус изменен на "Завершена"', user: 'Петров П.П.' },
-    ],
-  },
-  {
-    id: 23,
-    title: 'Обновление операционной системы Windows',
-    description: 'Требуется обновить Windows 10 до последней версии на компьютерах администрации.',
-    category: 'Программное обеспечение',
-    priority: 'Средний',
-    status: 'В работе',
-    author: 'Новиков А.В.',
-    assignedTo: 'Администратор',
-    createdAt: '2025-11-01T10:00:00',
-    updatedAt: '2025-11-02T15:00:00',
-    history: [
-      { timestamp: '2025-11-01T10:00:00', action: 'Заявка создана', user: 'Новиков А.В.' },
-      { timestamp: '2025-11-02T15:00:00', action: 'Статус изменен на "В работе"', user: 'Администратор' },
-    ],
-  },
-  {
-    id: 24,
-    title: 'Настройка доступа к облачному хранилищу',
-    description: 'Преподавателям нужен доступ к Google Drive для обмена учебными материалами.',
-    category: 'Доступы',
-    priority: 'Средний',
-    status: 'Новая',
-    author: 'Степанова В.П.',
-    assignedTo: null,
-    createdAt: '2025-11-03T14:00:00',
-    updatedAt: '2025-11-03T14:00:00',
-    history: [
-      { timestamp: '2025-11-03T14:00:00', action: 'Заявка создана', user: 'Степанова В.П.' },
-    ],
-  },
-  {
-    id: 25,
-    title: 'Ремонт системного блока в серверной',
-    description: 'Один из серверов издает странные звуки, возможно проблема с вентилятором.',
-    category: 'Оборудование',
-    priority: 'Высокий',
-    status: 'Новая',
-    author: 'Администратор',
-    assignedTo: null,
-    createdAt: '2025-11-03T15:00:00',
-    updatedAt: '2025-11-03T15:00:00',
-    history: [
-      { timestamp: '2025-11-03T15:00:00', action: 'Заявка создана', user: 'Администратор' },
     ],
   },
 ];
@@ -438,12 +278,14 @@ const saveTicketsToStorage = (tickets: any[]) => {
 function AppContent() {
   const { user, isAuthenticated, isAdmin, isLoading } = useAuth();
   const [currentPage, setCurrentPage] = useState('dashboard');
-  const [tickets, setTickets] = useState(loadTicketsFromStorage);
+  const [tickets, setTickets] = useState(() => loadTicketsFromStorage());
   const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
   const [showRegister, setShowRegister] = useState(false);
 
   useEffect(() => {
-    saveTicketsToStorage(tickets);
+    if (tickets && tickets.length > 0) {
+      saveTicketsToStorage(tickets);
+    }
   }, [tickets]);
 
   const handleCreateTicket = (ticketData: any) => {
