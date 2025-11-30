@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useNotifications } from '../contexts/NotificationContext';
 
 export function Navbar({
   currentPage,
@@ -8,8 +9,10 @@ export function Navbar({
   onNavigateStatistics,
   onNavigateDocumentation,
   onNavigateSecurityLogs,
+  onToggleNotifications,
 }) {
   const { user, isAdmin, logout, toggleRole } = useAuth();
+  const { unreadCount } = useNotifications();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
@@ -92,6 +95,32 @@ export function Navbar({
       fontWeight: '600',
       background: isAdmin ? '#27AE60' : '#3498db',
       color: '#ffffff',
+    },
+    notificationButton: {
+      position: 'relative',
+      padding: '10px',
+      border: 'none',
+      borderRadius: '10px',
+      background: '#f8f9fa',
+      cursor: 'pointer',
+      transition: 'all 0.3s',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    notificationBadge: {
+      position: 'absolute',
+      top: '-5px',
+      right: '-5px',
+      background: '#E74C3C',
+      color: '#ffffff',
+      borderRadius: '12px',
+      padding: '2px 6px',
+      fontSize: '11px',
+      fontWeight: '700',
+      minWidth: '20px',
+      textAlign: 'center',
+      boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
     },
     button: {
       padding: '10px 18px',
@@ -180,6 +209,21 @@ export function Navbar({
                 {isAdmin ? 'ADMIN' : 'USER'}
               </span>
             </div>
+
+            <button
+              onClick={onToggleNotifications}
+              style={styles.notificationButton}
+              onMouseEnter={(e) => e.target.style.background = '#e8f4f8'}
+              onMouseLeave={(e) => e.target.style.background = '#f8f9fa'}
+              title="Уведомления"
+            >
+              <svg style={{ width: '20px', height: '20px', color: '#2E86C1' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              {unreadCount > 0 && (
+                <span style={styles.notificationBadge}>{unreadCount}</span>
+              )}
+            </button>
 
             <button
               onClick={toggleRole}

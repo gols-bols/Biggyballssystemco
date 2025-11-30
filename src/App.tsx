@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { NotificationProvider, useNotifications } from './contexts/NotificationContext';
 import { LoginPage } from './components/LoginPage';
 import { RegisterPage } from './components/RegisterPage';
 import { Dashboard } from './components/Dashboard';
@@ -12,11 +13,15 @@ import { Footer } from './components/Footer';
 import { YandexVerification } from './components/YandexVerification';
 import { DatabaseDocumentation } from './components/DatabaseDocumentation';
 import { SecurityLogs } from './components/SecurityLogs';
+import { NotificationCenter } from './components/NotificationCenter';
+import { NotificationSettings } from './components/NotificationSettings';
+import { ToastContainer } from './components/ToastContainer';
 
 // Начальные данные заявок (оптимизированный набор для пагинации)
 const initialTickets = [
   {
     id: 1,
+    number: 1001,
     title: 'Не работает принтер в аудитории 205',
     description: 'Принтер HP LaserJet не печатает документы.',
     category: 'Оборудование',
@@ -33,6 +38,7 @@ const initialTickets = [
   },
   {
     id: 2,
+    number: 1002,
     title: 'Запрос доступа к корпоративной почте',
     description: 'Прошу предоставить доступ к почте для нового сотрудника.',
     category: 'Доступы',
@@ -48,9 +54,10 @@ const initialTickets = [
   },
   {
     id: 3,
+    number: 1003,
     title: 'Установка Microsoft Office',
     description: 'Установить MS Office 2021 на компьютер в кабинете 301.',
-    category: 'Программное обеспечение',
+    category: 'Программное оеспечение',
     priority: 'Средний',
     status: 'Завершена',
     author: 'Смирнов А.И.',
@@ -64,6 +71,7 @@ const initialTickets = [
   },
   {
     id: 4,
+    number: 1004,
     title: 'Не работает проектор в актовом зале',
     description: 'Проектор Epson не включается.',
     category: 'Оборудование',
@@ -79,6 +87,7 @@ const initialTickets = [
   },
   {
     id: 5,
+    number: 1005,
     title: 'Сброс пароля от учетной записи',
     description: 'Требуется сброс пароля от корпоративной сети.',
     category: 'Доступы',
@@ -95,6 +104,7 @@ const initialTickets = [
   },
   {
     id: 6,
+    number: 1006,
     title: 'Обновление антивирусного ПО',
     description: 'Обновить Kaspersky на всех компьютерах лаборатории.',
     category: 'Программное обеспечение',
@@ -110,13 +120,14 @@ const initialTickets = [
   },
   {
     id: 7,
+    number: 1007,
     title: 'Замена картриджа в принтере',
     description: 'В принтере Canon закончился тонер.',
     category: 'Оборудование',
     priority: 'Низкий',
     status: 'Завершена',
-    author: 'Волкова Т.А.',
-    assignedTo: 'Петров П.П.',
+    author: '��олкова Т.А.',
+    assignedTo: 'Петро П.П.',
     createdAt: '2025-10-25T13:20:00',
     updatedAt: '2025-10-26T10:00:00',
     history: [
@@ -126,6 +137,7 @@ const initialTickets = [
   },
   {
     id: 8,
+    number: 1008,
     title: 'Настройка Wi-Fi в учебном корпусе',
     description: 'Слабый сигнал Wi-Fi на втором этаже.',
     category: 'Оборудование',
@@ -142,6 +154,7 @@ const initialTickets = [
   },
   {
     id: 9,
+    number: 1009,
     title: 'Установка Adobe Photoshop',
     description: 'Установить Adobe Photoshop CC на компьютеры в кабинете дизайна.',
     category: 'Программное обеспечение',
@@ -157,8 +170,9 @@ const initialTickets = [
   },
   {
     id: 10,
+    number: 1010,
     title: 'Ремонт клавиатуры',
-    description: 'Клав��атура на рабочем месте №5 не работает.',
+    description: 'Клаватура на рабочем месте №5 не работает.',
     category: 'Оборудование',
     priority: 'Низкий',
     status: 'Завершена',
@@ -173,6 +187,7 @@ const initialTickets = [
   },
   {
     id: 11,
+    number: 1011,
     title: 'Создание учетной записи',
     description: 'Новому преподавателю нужен доступ к ресурсам.',
     category: 'Доступы',
@@ -189,6 +204,7 @@ const initialTickets = [
   },
   {
     id: 12,
+    number: 1012,
     title: 'Не запускается 1С:Предприятие',
     description: 'Программа 1С выдает ошибку при запуске.',
     category: 'Программное обеспечение',
@@ -204,6 +220,7 @@ const initialTickets = [
   },
   {
     id: 13,
+    number: 1013,
     title: 'Настройка сетевого диска',
     description: 'Настроить доступ к общему сетевому диску.',
     category: 'Доступы',
@@ -220,6 +237,7 @@ const initialTickets = [
   },
   {
     id: 14,
+    number: 1014,
     title: 'Замена монитора',
     description: 'Монитор мерцает и показывает полосы.',
     category: 'Оборудование',
@@ -236,6 +254,7 @@ const initialTickets = [
   },
   {
     id: 15,
+    number: 1015,
     title: 'Установка Python 3.11',
     description: 'Для курса по ML нужен Python 3.11.',
     category: 'Программное обеспечение',
@@ -278,10 +297,18 @@ const saveTicketsToStorage = (tickets: any[]) => {
 
 function AppContent() {
   const { user, isAuthenticated, isAdmin, isLoading } = useAuth();
+  const { 
+    notifyNewTicket, 
+    notifyStatusChange, 
+    notifyNewComment,
+    notifyPriorityChange,
+    notifyCompleted,
+  } = useNotifications();
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [tickets, setTickets] = useState(() => loadTicketsFromStorage());
   const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
   const [showRegister, setShowRegister] = useState(false);
+  const [showNotificationCenter, setShowNotificationCenter] = useState(false);
 
   useEffect(() => {
     if (tickets && tickets.length > 0) {
@@ -293,6 +320,7 @@ function AppContent() {
     const newTicket = {
       ...ticketData,
       id: tickets.length > 0 ? Math.max(...tickets.map((t: any) => t.id)) + 1 : 1,
+      number: tickets.length > 0 ? Math.max(...tickets.map((t: any) => t.number || t.id)) + 1 : 1001,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       history: [
@@ -305,12 +333,41 @@ function AppContent() {
     };
     setTickets([newTicket, ...tickets]);
     setCurrentPage('dashboard');
+    
+    // Уведомление для пользователя
+    notifyNewTicket(newTicket, user?.displayName || 'Пользователь');
   };
 
   const handleUpdateTicket = (id: number, updates: any) => {
-    setTickets(tickets.map((ticket: any) => 
-      ticket.id === id ? { ...ticket, ...updates } : ticket
-    ));
+    const oldTicket = tickets.find((t: any) => t.id === id);
+    const updatedTickets = tickets.map((ticket: any) => 
+      ticket.id === id ? { ...ticket, ...updates, updatedAt: new Date().toISOString() } : ticket
+    );
+    setTickets(updatedTickets);
+    
+    // Создаем уведомления при изменении
+    if (oldTicket && updates.status && oldTicket.status !== updates.status) {
+      notifyStatusChange(
+        { ...oldTicket, ...updates },
+        oldTicket.status,
+        updates.status,
+        user?.displayName || 'Пользователь'
+      );
+      
+      // Уведомление о завершении
+      if (updates.status === 'Завершена') {
+        notifyCompleted({ ...oldTicket, ...updates });
+      }
+    }
+    
+    // Уведомление при изменении приоритета
+    if (oldTicket && updates.priority && oldTicket.priority !== updates.priority) {
+      notifyPriorityChange(
+        { ...oldTicket, ...updates },
+        oldTicket.priority,
+        updates.priority
+      );
+    }
   };
 
   const handleViewTicket = (id: number) => {
@@ -358,6 +415,7 @@ function AppContent() {
         onNavigateStatistics={() => setCurrentPage('statistics')}
         onNavigateDocumentation={() => setCurrentPage('documentation')}
         onNavigateSecurityLogs={() => setCurrentPage('securitylogs')}
+        onToggleNotifications={() => setShowNotificationCenter(!showNotificationCenter)}
       />
 
       <main style={{ flex: 1 }}>
@@ -407,9 +465,20 @@ function AppContent() {
         {currentPage === 'securitylogs' && (
           <SecurityLogs onBack={() => setCurrentPage('dashboard')} />
         )}
+        
+        {currentPage === 'notificationsettings' && (
+          <NotificationSettings onBack={() => setCurrentPage('dashboard')} />
+        )}
       </main>
 
       <Footer />
+      
+      {showNotificationCenter && (
+        <NotificationCenter
+          onClose={() => setShowNotificationCenter(false)}
+          onViewTicket={handleViewTicket}
+        />
+      )}
     </div>
   );
 }
@@ -417,10 +486,13 @@ function AppContent() {
 export default function App() {
   return (
     <AuthProvider>
-      <div style={{ minHeight: '100vh', background: '#f5f5f5' }}>
-        <AppContent />
-        <YandexVerification />
-      </div>
+      <NotificationProvider>
+        <div style={{ minHeight: '100vh', background: '#f5f5f5' }}>
+          <AppContent />
+          <YandexVerification />
+          <ToastContainer />
+        </div>
+      </NotificationProvider>
     </AuthProvider>
   );
 }
