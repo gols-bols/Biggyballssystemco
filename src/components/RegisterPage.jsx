@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { validators, securityLogger } from '../utils/security';
 
 export function RegisterPage({ onSwitchToLogin }) {
   const { register } = useAuth();
@@ -12,11 +13,13 @@ export function RegisterPage({ onSwitchToLogin }) {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
+  const [success, setSuccess] = useState(false);
 
   const getPasswordStrength = (pass) => {
     let strength = 0;
-    if (pass.length >= 6) strength++;
-    if (pass.length >= 10) strength++;
+    if (pass.length >= 8) strength++;
+    if (pass.length >= 12) strength++;
     if (/[a-z]/.test(pass) && /[A-Z]/.test(pass)) strength++;
     if (/[0-9]/.test(pass)) strength++;
     if (/[^a-zA-Z0-9]/.test(pass)) strength++;
@@ -29,35 +32,65 @@ export function RegisterPage({ onSwitchToLogin }) {
 
   const passwordStrength = getPasswordStrength(password);
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    const errors = {};
+    
+    // Валидация каждого поля
+    const usernameError = validators.username(username);
+    if (usernameError) errors.username = usernameError;
+    
+    const emailError = validators.email(email);
+    if (emailError) errors.email = emailError;
+    
+    const displayNameError = validators.displayName(displayName);
+    if (displayNameError) errors.displayName = displayNameError;
+    
+    const passwordError = validators.password(password);
+    if (passwordError) errors.password = passwordError;
+    
+    if (!confirmPassword) {
+      errors.confirmPassword = 'Подтвердите пароль';
+    } else if (password !== confirmPassword) {
+      errors.confirmPassword = 'Пароли не совпадают';
+    }
+    
+    return errors;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setValidationErrors({});
+    setSuccess(false);
 
-    if (!username || !email || !displayName || !password || !confirmPassword) {
-      setError('Пожалуйста, заполните все поля');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError('Пароли не совпадают');
-      return;
-    }
-
-    if (password.length < 6) {
-      setError('Пароль должен содержать минимум 6 символов');
+    // Валидация формы
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      securityLogger.log('registration_validation_failed', { username, errors });
       return;
     }
 
     setIsLoading(true);
 
-    setTimeout(() => {
-      const result = register(username, email, displayName, password);
+    try {
+      // register теперь асинхронный
+      const result = await register(username, password, displayName, email);
       
-      if (!result.success) {
+      if (result.success) {
+        setSuccess(true);
+        setTimeout(() => {
+          onSwitchToLogin();
+        }, 2000);
+      } else {
         setError(result.error || 'Ошибка регистрации');
-        setIsLoading(false);
       }
-    }, 500);
+    } catch (err) {
+      console.error('Ошибка при регистрации:', err);
+      setError('Произошла непредвиденная ошибка');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const styles = {
@@ -218,6 +251,17 @@ export function RegisterPage({ onSwitchToLogin }) {
       cursor: 'pointer',
       textDecoration: 'none',
     },
+    success: {
+      padding: '12px',
+      background: '#e8f5e9',
+      border: '1px solid #c8e6c9',
+      borderRadius: '8px',
+      color: '#2e7d32',
+      fontSize: '13px',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px',
+    },
   };
 
   return (
@@ -239,6 +283,14 @@ export function RegisterPage({ onSwitchToLogin }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <span>{error}</span>
+            </div>
+          )}
+          {success && (
+            <div style={styles.success}>
+              <svg style={{ width: '18px', height: '18px', flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Регистрация успешна! Через 2 секунды вы будете перенаправлены на страницу входа.</span>
             </div>
           )}
 
@@ -266,6 +318,11 @@ export function RegisterPage({ onSwitchToLogin }) {
                 disabled={isLoading}
               />
             </div>
+            {validationErrors.username && (
+              <p style={{ color: '#c62828', fontSize: '12px', marginTop: '4px' }}>
+                {validationErrors.username}
+              </p>
+            )}
           </div>
 
           <div style={styles.inputGroup}>
@@ -292,6 +349,11 @@ export function RegisterPage({ onSwitchToLogin }) {
                 disabled={isLoading}
               />
             </div>
+            {validationErrors.email && (
+              <p style={{ color: '#c62828', fontSize: '12px', marginTop: '4px' }}>
+                {validationErrors.email}
+              </p>
+            )}
           </div>
 
           <div style={styles.inputGroup}>
@@ -318,6 +380,11 @@ export function RegisterPage({ onSwitchToLogin }) {
                 disabled={isLoading}
               />
             </div>
+            {validationErrors.displayName && (
+              <p style={{ color: '#c62828', fontSize: '12px', marginTop: '4px' }}>
+                {validationErrors.displayName}
+              </p>
+            )}
           </div>
 
           <div style={styles.inputGroup}>
@@ -377,6 +444,11 @@ export function RegisterPage({ onSwitchToLogin }) {
                 </p>
               </div>
             )}
+            {validationErrors.password && (
+              <p style={{ color: '#c62828', fontSize: '12px', marginTop: '4px' }}>
+                {validationErrors.password}
+              </p>
+            )}
           </div>
 
           <div style={styles.inputGroup}>
@@ -420,6 +492,11 @@ export function RegisterPage({ onSwitchToLogin }) {
                 )}
               </button>
             </div>
+            {validationErrors.confirmPassword && (
+              <p style={{ color: '#c62828', fontSize: '12px', marginTop: '4px' }}>
+                {validationErrors.confirmPassword}
+              </p>
+            )}
           </div>
 
           <button

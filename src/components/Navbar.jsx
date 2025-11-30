@@ -7,6 +7,7 @@ export function Navbar({
   onNavigateDashboard,
   onNavigateStatistics,
   onNavigateDocumentation,
+  onNavigateSecurityLogs,
 }) {
   const { user, isAdmin, logout, toggleRole } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -254,6 +255,23 @@ export function Navbar({
                 }}
               >
                 Документация
+              </button>
+            )}
+
+            {currentPage !== 'securityLogs' && (
+              <button
+                onClick={onNavigateSecurityLogs}
+                style={styles.button}
+                onMouseEnter={(e) => {
+                  e.target.style.background = '#2E86C1';
+                  e.target.style.color = '#ffffff';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'transparent';
+                  e.target.style.color = '#2E86C1';
+                }}
+              >
+                Логи безопасности
               </button>
             )}
 

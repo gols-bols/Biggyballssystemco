@@ -11,6 +11,7 @@ import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { YandexVerification } from './components/YandexVerification';
 import { DatabaseDocumentation } from './components/DatabaseDocumentation';
+import { SecurityLogs } from './components/SecurityLogs';
 
 // Начальные данные заявок (оптимизированный набор для пагинации)
 const initialTickets = [
@@ -157,7 +158,7 @@ const initialTickets = [
   {
     id: 10,
     title: 'Ремонт клавиатуры',
-    description: 'Клавиатура на рабочем месте №5 не работает.',
+    description: 'Клав��атура на рабочем месте №5 не работает.',
     category: 'Оборудование',
     priority: 'Низкий',
     status: 'Завершена',
@@ -356,6 +357,7 @@ function AppContent() {
         onNavigateDashboard={() => setCurrentPage('dashboard')}
         onNavigateStatistics={() => setCurrentPage('statistics')}
         onNavigateDocumentation={() => setCurrentPage('documentation')}
+        onNavigateSecurityLogs={() => setCurrentPage('securitylogs')}
       />
 
       <main style={{ flex: 1 }}>
@@ -401,6 +403,10 @@ function AppContent() {
         )}
 
         {currentPage === 'documentation' && <DatabaseDocumentation />}
+        
+        {currentPage === 'securitylogs' && (
+          <SecurityLogs onBack={() => setCurrentPage('dashboard')} />
+        )}
       </main>
 
       <Footer />

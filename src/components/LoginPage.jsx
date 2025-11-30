@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { validators, securityLogger } from '../utils/security';
 
 export function LoginPage({ onSwitchToRegister }) {
   const { login } = useAuth();
@@ -8,21 +9,50 @@ export function LoginPage({ onSwitchToRegister }) {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    const errors = {};
+    
+    // Базовая валидация (не такая строгая как при регистрации)
+    if (!username || username.length < 3) {
+      errors.username = 'Логин должен содержать минимум 3 символа';
+    }
+    if (!password || password.length < 3) {
+      errors.password = 'Пароль слишком короткий';
+    }
+    
+    return errors;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setValidationErrors({});
+    
+    // Валидация
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      securityLogger.log('login_validation_failed', { username, errors });
+      return;
+    }
+    
     setIsLoading(true);
 
-    setTimeout(() => {
-      const result = login(username, password);
+    try {
+      // login теперь асинхронный (из-за хеширования)
+      const result = await login(username, password);
       
       if (!result.success) {
         setError(result.error || 'Ошибка входа');
       }
-      
+    } catch (err) {
+      console.error('Ошибка при входе:', err);
+      setError('Произошла непредвиденная ошибка');
+    } finally {
       setIsLoading(false);
-    }, 500);
+    }
   };
 
   const styles = {
@@ -266,6 +296,11 @@ export function LoginPage({ onSwitchToRegister }) {
                 disabled={isLoading}
               />
             </div>
+            {validationErrors.username && (
+              <div style={{ color: '#c62828', fontSize: '12px', marginTop: '5px' }}>
+                {validationErrors.username}
+              </div>
+            )}
           </div>
 
           <div style={styles.inputGroup}>
@@ -311,6 +346,11 @@ export function LoginPage({ onSwitchToRegister }) {
                 )}
               </button>
             </div>
+            {validationErrors.password && (
+              <div style={{ color: '#c62828', fontSize: '12px', marginTop: '5px' }}>
+                {validationErrors.password}
+              </div>
+            )}
           </div>
 
           <button
