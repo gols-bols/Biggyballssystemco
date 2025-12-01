@@ -212,13 +212,16 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }) {
       background: '#ffffff',
       cursor: 'pointer',
     },
-    table: {
-      width: '100%',
+    tableWrapper: {
       background: '#ffffff',
       borderRadius: '15px',
       boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
-      overflow: 'hidden',
       border: '1px solid #e0e0e0',
+      overflow: 'hidden',
+    },
+    table: {
+      width: '100%',
+      display: 'table',
     },
     tableHeader: {
       background: '#f8f9fa',
@@ -226,21 +229,66 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }) {
     },
     tableRow: {
       display: 'grid',
-      gridTemplateColumns: '80px 2fr 1fr 120px 120px 120px 150px',
+      gridTemplateColumns: '100px 2fr 1fr 130px 130px 150px 120px',
       gap: '15px',
       padding: '18px 20px',
       alignItems: 'center',
       borderBottom: '1px solid #f0f0f0',
+      transition: 'background 0.2s',
     },
     tableCell: {
       fontSize: '14px',
       color: '#2c3e50',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
     },
     tableHeaderCell: {
       fontSize: '13px',
       fontWeight: '600',
       color: '#7f8c8d',
       textTransform: 'uppercase',
+    },
+    mobileCard: {
+      background: '#ffffff',
+      borderRadius: '12px',
+      padding: '20px',
+      marginBottom: '15px',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+      border: '1px solid #e0e0e0',
+    },
+    mobileCardHeader: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      marginBottom: '15px',
+      gap: '10px',
+    },
+    mobileCardId: {
+      fontSize: '16px',
+      fontWeight: '700',
+      color: '#2E86C1',
+    },
+    mobileCardTitle: {
+      fontSize: '16px',
+      fontWeight: '600',
+      color: '#2c3e50',
+      marginBottom: '12px',
+    },
+    mobileCardRow: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '10px',
+      fontSize: '14px',
+    },
+    mobileCardLabel: {
+      color: '#7f8c8d',
+      fontSize: '13px',
+    },
+    mobileCardValue: {
+      color: '#2c3e50',
+      fontWeight: '500',
     },
     actionButton: {
       padding: '8px 14px',
@@ -252,6 +300,19 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }) {
       borderRadius: '8px',
       cursor: 'pointer',
       transition: 'all 0.3s',
+    },
+    mobileCardButton: {
+      width: '100%',
+      padding: '12px',
+      fontSize: '14px',
+      fontWeight: '600',
+      background: '#2E86C1',
+      color: '#ffffff',
+      border: 'none',
+      borderRadius: '10px',
+      cursor: 'pointer',
+      transition: 'all 0.3s',
+      marginTop: '15px',
     },
     modal: {
       position: 'fixed',
@@ -273,6 +334,8 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }) {
       maxWidth: '500px',
       width: '100%',
       boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
+      maxHeight: '90vh',
+      overflowY: 'auto',
     },
     modalTitle: {
       fontSize: '22px',
@@ -295,6 +358,8 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }) {
       borderRadius: '10px',
       cursor: 'pointer',
       transition: 'all 0.3s',
+      background: 'transparent',
+      color: '#2E86C1',
     },
     buttonPrimary: {
       background: '#27AE60',
@@ -308,6 +373,7 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }) {
       gap: '10px',
       marginTop: '30px',
       padding: '20px',
+      flexWrap: 'wrap',
     },
     pageButton: {
       padding: '10px 16px',
@@ -334,6 +400,50 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }) {
 
   return (
     <div style={styles.container}>
+      <style>{`
+        @media (max-width: 1200px) {
+          .admin-table-row {
+            grid-template-columns: 80px 2fr 1fr 110px 110px 130px 100px !important;
+            gap: 10px !important;
+            padding: 15px 12px !important;
+          }
+          .admin-table-cell {
+            font-size: 13px !important;
+          }
+        }
+
+        @media (max-width: 900px) {
+          .admin-desktop-table {
+            display: none !important;
+          }
+          .admin-mobile-cards {
+            display: block !important;
+          }
+        }
+
+        @media (min-width: 901px) {
+          .admin-desktop-table {
+            display: block !important;
+          }
+          .admin-mobile-cards {
+            display: none !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .admin-title {
+            font-size: 24px !important;
+          }
+          .admin-stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+
+        .admin-table-row:hover {
+          background: #f8f9fa !important;
+        }
+      `}</style>
+
       <div style={styles.header}>
         <div style={styles.headerLeft}>
           <button
@@ -358,7 +468,7 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }) {
       </div>
 
       {/* Статистика */}
-      <div style={styles.statsGrid}>
+      <div style={styles.statsGrid} className="admin-stats-grid">
         <div style={styles.statCard}>
           <p style={{...styles.statNumber, color: '#3498db'}}>{stats.total}</p>
           <p style={styles.statLabel}>Всего заявок</p>
@@ -450,45 +560,99 @@ export function AdminPanel({ tickets, onBack, onUpdateTicket }) {
           <p style={{ fontSize: '14px' }}>Попробуйте изменить фильтры</p>
         </div>
       ) : (
-        <div style={styles.table}>
-          <div style={{...styles.tableRow, ...styles.tableHeader}}>
-            <div style={styles.tableHeaderCell}>ID</div>
-            <div style={styles.tableHeaderCell}>Тема</div>
-            <div style={styles.tableHeaderCell}>Автор</div>
-            <div style={styles.tableHeaderCell}>Статус</div>
-            <div style={styles.tableHeaderCell}>Приоритет</div>
-            <div style={styles.tableHeaderCell}>Категория</div>
-            <div style={styles.tableHeaderCell}>Действия</div>
+        <>
+          {/* Desktop Table */}
+          <div style={styles.tableWrapper} className="admin-desktop-table">
+            <div style={styles.table}>
+              <div style={{...styles.tableRow, ...styles.tableHeader}}>
+                <div style={styles.tableHeaderCell}>ID</div>
+                <div style={styles.tableHeaderCell}>Тема</div>
+                <div style={styles.tableHeaderCell}>Автор</div>
+                <div style={styles.tableHeaderCell}>Статус</div>
+                <div style={styles.tableHeaderCell}>Приоритет</div>
+                <div style={styles.tableHeaderCell}>Категория</div>
+                <div style={styles.tableHeaderCell}>Действия</div>
+              </div>
+              {paginatedTickets.map(ticket => (
+                <div key={ticket.id} style={styles.tableRow} className="admin-table-row">
+                  <div style={styles.tableCell} className="admin-table-cell">#{ticket.id}</div>
+                  <div style={{...styles.tableCell, fontWeight: '500'}} className="admin-table-cell">{ticket.title}</div>
+                  <div style={styles.tableCell} className="admin-table-cell">{ticket.author}</div>
+                  <div>
+                    <span style={getStatusStyle(ticket.status)}>{ticket.status}</span>
+                  </div>
+                  <div>
+                    <span style={getPriorityStyle(ticket.priority)}>{ticket.priority}</span>
+                  </div>
+                  <div style={styles.tableCell} className="admin-table-cell">{ticket.category}</div>
+                  <div>
+                    <button
+                      onClick={() => {
+                        setSelectedTicket(ticket);
+                        setNewStatus(ticket.status);
+                        setAssignedTo(ticket.assignedTo || '');
+                      }}
+                      style={styles.actionButton}
+                      onMouseEnter={(e) => e.target.style.background = '#1F618D'}
+                      onMouseLeave={(e) => e.target.style.background = '#2E86C1'}
+                    >
+                      Изменить
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          {paginatedTickets.map(ticket => (
-            <div key={ticket.id} style={styles.tableRow}>
-              <div style={styles.tableCell}>#{ticket.id}</div>
-              <div style={{...styles.tableCell, fontWeight: '500'}}>{ticket.title}</div>
-              <div style={styles.tableCell}>{ticket.author}</div>
-              <div>
-                <span style={getStatusStyle(ticket.status)}>{ticket.status}</span>
-              </div>
-              <div>
-                <span style={getPriorityStyle(ticket.priority)}>{ticket.priority}</span>
-              </div>
-              <div style={styles.tableCell}>{ticket.category}</div>
-              <div>
+
+          {/* Mobile Cards */}
+          <div className="admin-mobile-cards">
+            {paginatedTickets.map(ticket => (
+              <div key={ticket.id} style={styles.mobileCard}>
+                <div style={styles.mobileCardHeader}>
+                  <div style={styles.mobileCardId}>#{ticket.id}</div>
+                  <span style={getStatusStyle(ticket.status)}>{ticket.status}</span>
+                </div>
+
+                <div style={styles.mobileCardTitle}>{ticket.title}</div>
+
+                <div style={styles.mobileCardRow}>
+                  <span style={styles.mobileCardLabel}>👤 Автор:</span>
+                  <span style={styles.mobileCardValue}>{ticket.author}</span>
+                </div>
+
+                <div style={styles.mobileCardRow}>
+                  <span style={styles.mobileCardLabel}>⚡ Приоритет:</span>
+                  <span style={getPriorityStyle(ticket.priority)}>{ticket.priority}</span>
+                </div>
+
+                <div style={styles.mobileCardRow}>
+                  <span style={styles.mobileCardLabel}>📂 Категория:</span>
+                  <span style={styles.mobileCardValue}>{ticket.category}</span>
+                </div>
+
+                {ticket.assignedTo && (
+                  <div style={styles.mobileCardRow}>
+                    <span style={styles.mobileCardLabel}>👨‍💼 Исполнитель:</span>
+                    <span style={styles.mobileCardValue}>{ticket.assignedTo}</span>
+                  </div>
+                )}
+
                 <button
                   onClick={() => {
                     setSelectedTicket(ticket);
                     setNewStatus(ticket.status);
                     setAssignedTo(ticket.assignedTo || '');
                   }}
-                  style={styles.actionButton}
+                  style={styles.mobileCardButton}
                   onMouseEnter={(e) => e.target.style.background = '#1F618D'}
                   onMouseLeave={(e) => e.target.style.background = '#2E86C1'}
                 >
-                  Изменить
+                  ✏️ Редактировать заявку
                 </button>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </>
       )}
 
       {/* Пагинация */}

@@ -16,6 +16,9 @@ import { SecurityLogs } from './components/SecurityLogs';
 import { NotificationCenter } from './components/NotificationCenter';
 import { NotificationSettings } from './components/NotificationSettings';
 import { ToastContainer } from './components/ToastContainer';
+import { DesignJustification } from './components/DesignJustification';
+import { TestCases } from './components/TestCases';
+import { UserGuide } from './components/UserGuide';
 
 // Начальные данные заявок (оптимизированный набор для пагинации)
 const initialTickets = [
@@ -122,12 +125,12 @@ const initialTickets = [
     id: 7,
     number: 1007,
     title: 'Замена картриджа в принтере',
-    description: 'В принтере Canon закончился тонер.',
+    description: 'В принтере Canon закончился тнер.',
     category: 'Оборудование',
     priority: 'Низкий',
     status: 'Завершена',
-    author: '��олкова Т.А.',
-    assignedTo: 'Петро П.П.',
+    author: 'Волкова Т.А.',
+    assignedTo: 'Петров П.П.',
     createdAt: '2025-10-25T13:20:00',
     updatedAt: '2025-10-26T10:00:00',
     history: [
@@ -257,7 +260,7 @@ const initialTickets = [
     number: 1015,
     title: 'Установка Python 3.11',
     description: 'Для курса по ML нужен Python 3.11.',
-    category: 'Программное обеспечение',
+    category: 'Программно обеспечение',
     priority: 'Высокий',
     status: 'Новая',
     author: 'Орлов П.Е.',
@@ -469,9 +472,25 @@ function AppContent() {
         {currentPage === 'notificationsettings' && (
           <NotificationSettings onBack={() => setCurrentPage('dashboard')} />
         )}
+        
+        {currentPage === 'designjustification' && (
+          <DesignJustification onBack={() => setCurrentPage('dashboard')} />
+        )}
+        
+        {currentPage === 'testcases' && (
+          <TestCases onBack={() => setCurrentPage('dashboard')} />
+        )}
+        
+        {currentPage === 'userguide' && (
+          <UserGuide onBack={() => setCurrentPage('dashboard')} />
+        )}
       </main>
 
-      <Footer />
+      <Footer 
+        onNavigateToDesign={() => setCurrentPage('designjustification')} 
+        onNavigateToTests={() => setCurrentPage('testcases')}
+        onNavigateToUserGuide={() => setCurrentPage('userguide')}
+      />
       
       {showNotificationCenter && (
         <NotificationCenter

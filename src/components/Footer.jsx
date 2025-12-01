@@ -1,4 +1,4 @@
-export function Footer() {
+export function Footer({ onNavigateToDesign, onNavigateToTests, onNavigateToUserGuide }) {
   const handleResetData = () => {
     if (window.confirm('⚠️ Вы уверены, что хотите сбросить все данные?\n\nЭто удалит все заявки и пользователей!')) {
       localStorage.clear();
@@ -37,6 +37,12 @@ export function Footer() {
       fontSize: '12px',
       color: '#7f8c8d',
       margin: 0,
+    },
+    link: {
+      color: '#2E86C1',
+      textDecoration: 'none',
+      cursor: 'pointer',
+      fontWeight: '500',
     },
     resetButton: {
       background: 'none',
@@ -87,6 +93,45 @@ export function Footer() {
           </p>
           <p style={styles.smallText}>
             💾 LocalStorage базаданных •{' '}
+            {onNavigateToDesign && (
+              <>
+                <a
+                  onClick={onNavigateToDesign}
+                  style={styles.link}
+                  onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
+                  onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
+                >
+                  🎨 Обоснование дизайна
+                </a>
+                {' • '}
+              </>
+            )}
+            {onNavigateToTests && (
+              <>
+                <a
+                  onClick={onNavigateToTests}
+                  style={styles.link}
+                  onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
+                  onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
+                >
+                  🧪 Тест-кейсы
+                </a>
+                {' • '}
+              </>
+            )}
+            {onNavigateToUserGuide && (
+              <>
+                <a
+                  onClick={onNavigateToUserGuide}
+                  style={styles.link}
+                  onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
+                  onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
+                >
+                  📚 Руководство пользователя
+                </a>
+                {' • '}
+              </>
+            )}
             <button
               onClick={handleResetData}
               style={styles.resetButton}

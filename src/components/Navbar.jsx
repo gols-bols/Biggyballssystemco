@@ -16,6 +16,11 @@ export function Navbar({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
+  const handleNavigation = (callback) => {
+    callback();
+    setIsMobileMenuOpen(false);
+  };
+
   const styles = {
     header: {
       background: '#ffffff',
@@ -37,6 +42,7 @@ export function Navbar({
       display: 'flex',
       alignItems: 'center',
       gap: '15px',
+      flex: 1,
     },
     logoIcon: {
       width: '45px',
@@ -64,10 +70,116 @@ export function Navbar({
       color: '#7f8c8d',
       margin: 0,
     },
-    nav: {
+    desktopNav: {
       display: 'flex',
       alignItems: 'center',
       gap: '12px',
+    },
+    mobileMenuButton: {
+      display: 'none',
+      padding: '10px',
+      border: 'none',
+      background: 'transparent',
+      cursor: 'pointer',
+      position: 'relative',
+      zIndex: 1002,
+    },
+    burgerIcon: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '5px',
+      width: '28px',
+    },
+    burgerLine: {
+      height: '3px',
+      background: '#2E86C1',
+      borderRadius: '3px',
+      transition: 'all 0.3s ease',
+    },
+    burgerLineTop: (isOpen) => ({
+      height: '3px',
+      background: '#2E86C1',
+      borderRadius: '3px',
+      transition: 'all 0.3s ease',
+      transform: isOpen ? 'rotate(45deg) translateY(8px)' : 'none',
+    }),
+    burgerLineMiddle: (isOpen) => ({
+      height: '3px',
+      background: '#2E86C1',
+      borderRadius: '3px',
+      transition: 'all 0.3s ease',
+      opacity: isOpen ? 0 : 1,
+    }),
+    burgerLineBottom: (isOpen) => ({
+      height: '3px',
+      background: '#2E86C1',
+      borderRadius: '3px',
+      transition: 'all 0.3s ease',
+      transform: isOpen ? 'rotate(-45deg) translateY(-8px)' : 'none',
+    }),
+    mobileMenu: {
+      position: 'fixed',
+      top: 0,
+      right: 0,
+      width: '320px',
+      maxWidth: '85vw',
+      height: '100vh',
+      background: '#ffffff',
+      boxShadow: '-5px 0 20px rgba(0,0,0,0.2)',
+      transform: isMobileMenuOpen ? 'translateX(0)' : 'translateX(100%)',
+      transition: 'transform 0.3s ease',
+      zIndex: 1001,
+      overflowY: 'auto',
+      padding: '80px 20px 20px',
+    },
+    mobileOverlay: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'rgba(0,0,0,0.5)',
+      opacity: isMobileMenuOpen ? 1 : 0,
+      visibility: isMobileMenuOpen ? 'visible' : 'hidden',
+      transition: 'opacity 0.3s ease, visibility 0.3s ease',
+      zIndex: 1000,
+    },
+    mobileMenuItem: {
+      padding: '15px',
+      marginBottom: '10px',
+      borderRadius: '10px',
+      background: '#f8f9fa',
+      border: 'none',
+      width: '100%',
+      textAlign: 'left',
+      fontSize: '16px',
+      fontWeight: '600',
+      color: '#2c3e50',
+      cursor: 'pointer',
+      transition: 'all 0.2s',
+      fontFamily: 'Roboto, sans-serif',
+    },
+    mobileUserInfo: {
+      padding: '20px',
+      marginBottom: '20px',
+      borderRadius: '12px',
+      background: '#EBF5FB',
+      border: '2px solid #2E86C1',
+    },
+    mobileUserName: {
+      fontSize: '18px',
+      fontWeight: '700',
+      color: '#2c3e50',
+      marginBottom: '8px',
+    },
+    mobileUserRole: {
+      display: 'inline-block',
+      padding: '6px 12px',
+      borderRadius: '6px',
+      fontSize: '14px',
+      fontWeight: '600',
+      background: isAdmin ? '#27AE60' : '#3498db',
+      color: '#ffffff',
     },
     userBadge: {
       display: 'flex',
@@ -183,24 +295,68 @@ export function Navbar({
     },
   };
 
+  // Media queries через JavaScript
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 1024;
+
   return (
     <>
+      <style>{`
+        @media (max-width: 1024px) {
+          .desktop-nav {
+            display: none !important;
+          }
+          .mobile-menu-button {
+            display: flex !important;
+          }
+          .navbar-logo-subtitle {
+            display: none !important;
+          }
+          .navbar-logo-title {
+            font-size: 18px !important;
+          }
+          .navbar-user-badge {
+            display: none !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .navbar-logo-title {
+            font-size: 16px !important;
+          }
+          .navbar-logo-icon {
+            width: 35px !important;
+            height: 35px !important;
+          }
+        }
+
+        .mobile-menu-item:hover {
+          background: #2E86C1 !important;
+          color: #ffffff !important;
+        }
+
+        .mobile-menu-item-danger:hover {
+          background: #E74C3C !important;
+          color: #ffffff !important;
+        }
+      `}</style>
+
       <header style={styles.header}>
         <div style={styles.container}>
           <div style={styles.logoSection}>
-            <div style={styles.logoIcon}>
+            <div style={styles.logoIcon} className="navbar-logo-icon">
               <svg style={{ width: '25px', height: '25px', color: '#ffffff' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </div>
             <div style={styles.logoText}>
-              <h1 style={styles.logoTitle}>Система заявок</h1>
-              <p style={styles.logoSubtitle}>IT-отдел колледжа</p>
+              <h1 style={styles.logoTitle} className="navbar-logo-title">Система заявок</h1>
+              <p style={styles.logoSubtitle} className="navbar-logo-subtitle">IT-отдел колледжа</p>
             </div>
           </div>
 
-          <nav style={styles.nav}>
-            <div style={styles.userBadge}>
+          {/* Desktop Navigation */}
+          <nav style={styles.desktopNav} className="desktop-nav">
+            <div style={styles.userBadge} className="navbar-user-badge">
               <svg style={styles.userIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
@@ -334,8 +490,107 @@ export function Navbar({
               Выход
             </button>
           </nav>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            style={styles.mobileMenuButton}
+            className="mobile-menu-button"
+            aria-label="Меню"
+          >
+            <div style={styles.burgerIcon}>
+              <div style={styles.burgerLineTop(isMobileMenuOpen)}></div>
+              <div style={styles.burgerLineMiddle(isMobileMenuOpen)}></div>
+              <div style={styles.burgerLineBottom(isMobileMenuOpen)}></div>
+            </div>
+          </button>
         </div>
       </header>
+
+      {/* Mobile Menu Overlay */}
+      <div
+        style={styles.mobileOverlay}
+        onClick={() => setIsMobileMenuOpen(false)}
+      />
+
+      {/* Mobile Menu */}
+      <div style={styles.mobileMenu}>
+        <div style={styles.mobileUserInfo}>
+          <div style={styles.mobileUserName}>👤 {user?.displayName}</div>
+          <span style={styles.mobileUserRole}>
+            {isAdmin ? 'ADMIN' : 'USER'}
+          </span>
+        </div>
+
+        <button
+          onClick={() => handleNavigation(onToggleNotifications)}
+          style={styles.mobileMenuItem}
+          className="mobile-menu-item"
+        >
+          🔔 Уведомления {unreadCount > 0 && `(${unreadCount})`}
+        </button>
+
+        <button
+          onClick={() => handleNavigation(toggleRole)}
+          style={styles.mobileMenuItem}
+          className="mobile-menu-item"
+        >
+          🔄 Сменить роль
+        </button>
+
+        <button
+          onClick={() => handleNavigation(onNavigateDashboard)}
+          style={styles.mobileMenuItem}
+          className="mobile-menu-item"
+        >
+          🏠 Главная
+        </button>
+
+        {isAdmin && (
+          <button
+            onClick={() => handleNavigation(onNavigateAdmin)}
+            style={styles.mobileMenuItem}
+            className="mobile-menu-item"
+          >
+            ⚙️ Админ-панель
+          </button>
+        )}
+
+        <button
+          onClick={() => handleNavigation(onNavigateStatistics)}
+          style={styles.mobileMenuItem}
+          className="mobile-menu-item"
+        >
+          📊 Статистика
+        </button>
+
+        <button
+          onClick={() => handleNavigation(onNavigateDocumentation)}
+          style={styles.mobileMenuItem}
+          className="mobile-menu-item"
+        >
+          📚 Документация
+        </button>
+
+        <button
+          onClick={() => handleNavigation(onNavigateSecurityLogs)}
+          style={styles.mobileMenuItem}
+          className="mobile-menu-item"
+        >
+          🔐 Логи безопасности
+        </button>
+
+        <button
+          onClick={() => {
+            setIsMobileMenuOpen(false);
+            setShowLogoutConfirm(true);
+          }}
+          style={{...styles.mobileMenuItem, background: '#FADBD8', color: '#E74C3C'}}
+          className="mobile-menu-item mobile-menu-item-danger"
+        >
+          🚪 Выход
+        </button>
+      </div>
 
       {showLogoutConfirm && (
         <div style={styles.modal} onClick={() => setShowLogoutConfirm(false)}>
